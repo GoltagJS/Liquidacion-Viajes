@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquidación de Viajes</title>
+<meta name="theme-color" content="#0F5C5C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Liquidación">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23201D1A'/%3E%3Cg fill='%230F5C5C'%3E%3Crect x='0' y='0' width='20' height='20'/%3E%3Crect x='40' y='0' width='20' height='20'/%3E%3Crect x='80' y='0' width='20' height='20'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Crect x='60' y='20' width='20' height='20'/%3E%3Crect x='0' y='40' width='20' height='20'/%3E%3Crect x='40' y='40' width='20' height='20'/%3E%3Crect x='80' y='40' width='20' height='20'/%3E%3Crect x='20' y='60' width='20' height='20'/%3E%3Crect x='60' y='60' width='20' height='20'/%3E%3Crect x='0' y='80' width='20' height='20'/%3E%3Crect x='40' y='80' width='20' height='20'/%3E%3Crect x='80' y='80' width='20' height='20'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="manifest" id="pwa-manifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --paper:#F7F4EC;
+    --paper-2:#EFEADB;
+    --ink:#201D1A;
+    --ink-soft:#726C5F;
+    --line:#D9D2C0;
+    --petrol:#0F5C5C;
+    --petrol-dark:#0B3D3D;
+    --petrol-soft:#E3EFEE;
+    --verde:#2E7D46; --verde-bg:#E4F2E8;
+    --amarillo:#B8862B; --amarillo-bg:#FBF0DA;
+    --naranja:#C9642E; --naranja-bg:#FBE7DA;
+    --rojo:#B33A3A; --rojo-bg:#F7E1E1;
+    --gris:#9C9587; --gris-bg:#ECE8DE;
+    --mono:'Space Mono', ui-monospace, 'SF Mono', 'Courier New', monospace;
+    --sans:'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(32,29,26,0.06), 0 4px 14px rgba(32,29,26,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important; transition:none!important;}
+  }
+  button, input, select{font-family:inherit; font-size:inherit;}
+  :focus-visible{outline:2px solid var(--petrol); outline-offset:2px;}
+
+  /* ---------- App shell ---------- */
+  #app{max-width:1180px; margin:0 auto; padding-bottom:84px;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 18px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:8px;
+    background:repeating-linear-gradient(45deg, var(--ink) 0 6px, var(--petrol) 6px 12px);
+    flex:0 0 auto;
+  }
+  .brand-text h1{font-size:15px; margin:0; letter-spacing:0.02em; font-weight:800;}
+  .brand-text p{margin:0; font-size:11px; color:var(--ink-soft); font-family:var(--mono);}
+  .coche-pill{
+    font-family:var(--mono); font-size:12px; background:var(--ink); color:var(--paper);
+    padding:6px 10px; border-radius:20px; white-space:nowrap;
+  }
+
+  main{padding:16px;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  h2.view-title{font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin:4px 0 14px; font-weight:700;}
+
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; margin-bottom:14px; box-shadow:var(--shadow);
+  }
+  .card h3{margin:0 0 12px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px;}
+  .card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--petrol);}
+
+  .grid{display:grid; gap:12px;}
+  .grid-2{grid-template-columns:1fr 1fr;}
+  .grid-3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:640px){
+    .grid-2, .grid-3{grid-template-columns:1fr 1fr;}
+  }
+
+  label{display:block; font-size:11px; color:var(--ink-soft); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
+  .field{margin-bottom:0;}
+  input[type=text], input[type=number], input[type=date]{
+    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:7px;
+    background:#fff; color:var(--ink); font-family:var(--mono); font-size:14px;
+  }
+  input.auto{
+    background:var(--petrol-soft); border-color:#c9e0de; color:var(--petrol-dark); font-weight:700;
+  }
+  .checkline{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink); margin-top:8px;}
+  .checkline input{width:16px; height:16px;}
+
+  .hint{font-size:11px; color:var(--ink-soft); margin-top:6px; line-height:1.4;}
+
+  .result-big{
+    display:flex; align-items:baseline; justify-content:space-between;
+    background:var(--ink); color:var(--paper); border-radius:var(--radius);
+    padding:16px 18px; margin-top:2px;
+  }
+  .result-big .label{font-size:12px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.75;}
+  .result-big .value{font-family:var(--mono); font-size:26px; font-weight:700;}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; justify-content:center;
+    background:var(--petrol); color:#fff; border:none; border-radius:8px;
+    padding:11px 16px; font-weight:700; font-size:13px; cursor:pointer;
+  }
+  .btn:hover{background:var(--petrol-dark);}
+  .btn.secondary{background:#fff; color:var(--ink); border:1px solid var(--line);}
+  .btn.secondary:hover{background:var(--paper-2);}
+  .btn.ghost{background:transparent; color:var(--ink-soft); border:1px dashed var(--line); font-weight:600;}
+  .btn.danger{background:#fff; color:var(--rojo); border:1px solid var(--rojo);}
+  .actions-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+
+  /* ---------- Ticket styling (historial cards, mobile) ---------- */
+  .ticket{
+    background:#fff; border:1px dashed var(--line); border-radius:2px;
+    font-family:var(--mono); padding:14px 16px; margin-bottom:12px; position:relative;
+  }
+  .ticket::before, .ticket::after{
+    content:""; position:absolute; left:0; right:0; height:8px;
+    background-image: radial-gradient(circle at 6px 4px, var(--paper) 4px, transparent 4.5px);
+    background-size: 14px 8px; background-repeat:repeat-x;
+  }
+  .ticket::before{top:-4px;}
+  .ticket::after{bottom:-4px; transform:rotate(180deg);}
+  .ticket-row{display:flex; justify-content:space-between; font-size:12.5px; padding:2px 0;}
+  .ticket-row.strong{font-weight:700; border-top:1px dashed var(--line); margin-top:6px; padding-top:8px;}
+  .ticket-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .ticket-head .fecha{font-weight:700; font-size:13px;}
+  .status-chip{font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:0.04em;}
+  .ticket-actions{display:flex; gap:8px; margin-top:10px;}
+  .ticket-actions button{flex:1; font-size:11px; padding:7px;}
+
+  table.hist-table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12.5px;}
+  table.hist-table th{
+    text-align:left; font-family:var(--sans); text-transform:uppercase; letter-spacing:0.04em;
+    font-size:10.5px; color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--ink);
+  }
+  table.hist-table td{padding:9px 10px; border-bottom:1px solid var(--line);}
+  table.hist-table tr:hover td{background:var(--paper-2);}
+  .status-dot{width:10px;height:10px;border-radius:50%; display:inline-block;}
+  .tbl-actions button{
+    background:none; border:none; cursor:pointer; color:var(--petrol); font-family:var(--sans); font-size:11.5px; font-weight:700; margin-right:8px;
+  }
+  .tbl-actions button.del{color:var(--rojo);}
+
+  .empty{
+    text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:13px;
+  }
+
+  /* ---------- Economia ---------- */
+  .month-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .month-nav .month-label{font-weight:800; font-size:15px;}
+  .month-nav button{background:#fff; border:1px solid var(--line); border-radius:7px; width:32px; height:32px; cursor:pointer; font-size:14px;}
+
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
+  .cal-dow{font-size:10px; text-align:center; color:var(--ink-soft); font-weight:700; text-transform:uppercase;}
+  .cal-cell{
+    aspect-ratio:1/1; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:12px; font-weight:700; color:var(--ink); cursor:default;
+    background:var(--gris-bg); border:1px solid transparent;
+  }
+  .cal-cell.empty-cell{background:transparent;}
+  .cal-cell.has-data{cursor:pointer;}
+  .cal-cell.today{border-color:var(--ink);}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+  .legend i{width:9px; height:9px; border-radius:50%; display:inline-block;}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  @media (max-width:760px){.stat-grid{grid-template-columns:1fr 1fr;}}
+  .stat-box{background:var(--paper-2); border-radius:8px; padding:12px;}
+  .stat-box .k{font-size:10.5px; text-transform:uppercase; color:var(--ink-soft); font-weight:700; letter-spacing:0.03em;}
+  .stat-box .v{font-family:var(--mono); font-size:18px; font-weight:700; margin-top:4px;}
+
+  .analysis-text{font-size:13px; line-height:1.6; color:var(--ink); background:var(--petrol-soft); border-left:3px solid var(--petrol); padding:12px 14px; border-radius:6px;}
+
+  canvas{max-width:100%;}
+
+  /* ---------- Lock screen (login / setup) ---------- */
+  .lock-screen{
+    position:fixed; inset:0; background:var(--ink); z-index:100;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .lock-card{
+    background:var(--paper); border-radius:14px; padding:26px 22px; width:100%; max-width:340px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+  }
+  .lock-brand{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:18px;}
+  .lock-brand h1{font-size:15px; margin:0; font-weight:800;}
+  .lock-sub{text-align:center; font-size:11.5px; color:var(--ink-soft); margin:-10px 0 18px; font-family:var(--mono);}
+  .lock-field{margin-bottom:12px;}
+  .lock-check{display:flex; align-items:center; gap:8px; font-size:12.5px; margin:10px 0 16px;}
+  .lock-check input{width:15px;height:15px;}
+  .lock-error{color:var(--rojo); font-size:12px; margin-bottom:10px; display:none;}
+  .lock-divider{display:flex; align-items:center; gap:10px; margin:14px 0; font-size:10.5px; color:var(--ink-soft); text-transform:uppercase;}
+  .lock-divider::before, .lock-divider::after{content:""; flex:1; height:1px; background:var(--line);}
+  .btn-block{width:100%;}
+  .lock-link{display:block; text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:14px; background:none; border:none; cursor:pointer; text-decoration:underline;}
+  .logout-btn{background:none; border:none; cursor:pointer; font-size:15px; color:var(--paper); opacity:0.8; padding:4px 6px;}
+
+  /* ---------- Nav: bottom bar mobile / sidebar desktop ---------- */
+  .navbar{
+    position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line);
+    display:flex; z-index:20;
+  }
+  .navbar button{
+    flex:1; background:none; border:none; padding:10px 4px 8px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink-soft); font-weight:700; font-size:10.5px;
+  }
+  .navbar button.active{color:var(--petrol);}
+  .navbar button .ic{width:20px; height:20px;}
+
+  @media (min-width:900px){
+    #app{display:grid; grid-template-columns:220px 1fr; max-width:1280px; padding-bottom:0;}
+    .topbar{grid-column:1/3;}
+    .navbar{
+      position:static; flex-direction:column; border-top:none; border-right:1px solid var(--line);
+      padding:18px 10px; height:calc(100vh - 70px);
+    }
+    .navbar button{flex-direction:row; justify-content:flex-start; gap:10px; padding:10px 12px; border-radius:8px; font-size:13px; text-transform:none;}
+    .navbar button.active{background:var(--petrol-soft);}
+    main{padding:24px 28px;}
+    #hist-mobile, #resumen-mobile{display:none;}
+    #hist-desktop, #resumen-desktop{display:block!important;}
+  }
+
+  .month-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);
+  }
+  .month-card .mc-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .month-card .mc-head .mes{font-weight:800; font-size:14px;}
+  .month-card .mc-head .total{font-family:var(--mono); font-weight:700; font-size:15px; color:var(--petrol-dark);}
+  .mc-counts{display:flex; gap:10px; flex-wrap:wrap; font-size:12px;}
+  .mc-counts span{display:inline-flex; align-items:center; gap:5px; background:var(--paper-2); padding:4px 8px; border-radius:20px;}
+  .mc-counts i{width:8px; height:8px; border-radius:50%; display:inline-block;}
+</style>
+</head>
+<body>
+
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-brand">
+      <div class="brand-mark" style="width:28px;height:28px;"></div>
+      <h1>Liquidación de Viajes</h1>
+    </div>
+
+    <!-- Primer uso: crear usuario -->
+    <div id="lock-setup" style="display:none;">
+      <p class="lock-sub">Creá tu usuario para proteger tus datos</p>
+      <p class="lock-error" id="setup-error"></p>
+      <div class="lock-field"><label>Usuario</label><input type="text" id="setup-user"></div>
+      <div class="lock-field"><label>Contraseña</label><input type="password" id="setup-pass"></div>
+      <div class="lock-field"><label>Repetir contraseña</label><input type="password" id="setup-pass2"></div>
+      <label class="lock-check"><input type="checkbox" id="setup-bio"> Activar desbloqueo con huella dactilar en este teléfono</label>
+      <button class="btn btn-block" id="btn-setup">Crear usuario y entrar</button>
+    </div>
+
+    <!-- Ya existe usuario: login -->
+    <div id="lock-login" style="display:none;">
+      <p class="lock-sub">Ingresá para ver tus liquidaciones</p>
+      <p class="lock-error" id="login-error"></p>
+      <div class="lock-field"><label>Usuario</label><input type="text" id="login-user"></div>
+      <div class="lock-field"><label>Contraseña</label><input type="password" id="login-pass"></div>
+      <label class="lock-check"><input type="checkbox" id="login-remember"> Recordarme en este dispositivo</label>
+      <button class="btn btn-block" id="btn-login">Ingresar</button>
+      <div class="lock-divider" id="bio-divider" style="display:none;">o</div>
+      <button class="btn secondary btn-block" id="btn-bio-login" style="display:none;">🔒 Usar huella dactilar</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">
+        <h1>Liquidación de Viajes</h1>
+        <p id="coche-sub">COCHE Nº 2851 · REGISTRO PRIVADO</p>
+      </div>
+    </div>
+    <div class="coche-pill" id="today-pill">--/--/----</div>
+    <button class="logout-btn" id="btn-logout" title="Cerrar sesión">⎋</button>
+  </div>
+
+  <nav class="navbar" id="navbar">
+    <button data-view="turno" class="active"><span class="ic">🧾</span>Turno</button>
+    <button data-view="historial"><span class="ic">📋</span>Historial</button>
+    <button data-view="economia"><span class="ic">📈</span>Economía</button>
+    <button data-view="resumen"><span class="ic">🗓️</span>Resumen</button>
+  </nav>
+
+  <main>
+    <!-- ================= VISTA TURNO ================= -->
+    <section class="view active" id="view-turno">
+      <h2 class="view-title">Liquidación del turno</h2>
+
+      <div class="card">
+        <h3><span class="dot"></span>Datos del turno</h3>
+        <div class="grid grid-3">
+          <div class="field"><label>Fecha</label><input type="date" id="f-fecha"></div>
+          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" value="2851"></div>
+          <div class="field"><label>Km entrada</label><input type="number" id="f-kmEntrada" step="1"></div>
+        </div>
+        <div class="grid grid-3" style="margin-top:12px;">
+          <div class="field"><label>Km salida</label><input type="number" id="f-kmSalida" step="1"></div>
+          <div class="field"><label>Km total</label><input type="text" id="f-kmTotal" class="auto" readonly></div>
+          <div class="field"><label>Total facturado (ticket)</label><input type="number" id="f-total" step="1"></div>
+        </div>
+        <label class="checkline"><input type="checkbox" id="f-complementada"> Factura complementada (o coche distinto al habitual)</label>
+        <p class="hint">Si tildás esto, o si el Coche Nº no es el 2851, el Aporte Leyes pasa a $0 y "Otros" se calcula solo como el 4% del total.</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="dot"></span>Gastos del móvil</h3>
+        <div class="grid grid-3">
+          <div class="field"><label>Salario (29%)</label><input type="text" id="f-salario" class="auto" readonly></div>
+          <div class="field"><label>Viático</label><input type="number" id="f-viatico" step="1"></div>
+          <div class="field"><label>Combustible</label><input type="number" id="f-combustible" step="1"></div>
+        </div>
+        <div class="grid grid-3" style="margin-top:12px;">
+          <div class="field"><label>Aceite</label><input type="number" id="f-aceite" step="1"></div>
+          <div class="field"><label>Gomería</label><input type="number" id="f-gomeria" step="1"></div>
+          <div class="field"><label>Lavado</label><input type="number" id="f-lavado" step="1"></div>
+        </div>
+        <div class="grid grid-3" style="margin-top:12px;">
+          <div class="field"><label>Otros</label><input type="number" id="f-otros" step="1"></div>
+          <div class="field"><label>Gastos (total)</label><input type="text" id="f-gastos" class="auto" readonly></div>
+          <div class="field"><label>Líquido</label><input type="text" id="f-liquido" class="auto" readonly></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="dot"></span>Resultado del turno</h3>
+        <div class="grid grid-3">
+          <div class="field"><label>Aporte Leyes</label><input type="text" id="f-aporteLeyes" class="auto" readonly></div>
+          <div class="field"><label>Sub Total</label><input type="text" id="f-subTotal" class="auto" readonly></div>
+          <div class="field"><label>H13</label><input type="number" id="f-h13" step="1"></div>
+        </div>
+        <div class="grid grid-3" style="margin-top:12px;">
+          <div class="field"><label>Tarjeta de créd.</label><input type="number" id="f-tarjeta" step="1"></div>
+          <div class="field"><label>TOTAL final</label><input type="text" id="f-totalFinal" class="auto" readonly></div>
+          <div class="field"><label>Efectivo en mano</label><input type="number" id="f-efectivo" step="1"></div>
+        </div>
+        <div class="result-big" style="margin-top:14px;">
+          <span class="label">Total Real</span>
+          <span class="value" id="f-totalReal">$0</span>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn" id="btn-guardar">Guardar turno</button>
+        <button class="btn secondary" id="btn-nuevo">Empezar turno nuevo</button>
+      </div>
+    </section>
+
+    <!-- ================= VISTA HISTORIAL ================= -->
+    <section class="view" id="view-historial">
+      <h2 class="view-title">Historial de turnos</h2>
+      <div class="actions-row" style="margin-top:-4px; margin-bottom:14px;">
+        <button class="btn secondary" id="btn-export-hist">⬇ Descargar Excel (planilla)</button>
+        <button class="btn ghost" id="btn-import-hist">⬆ Restaurar desde Excel</button>
+        <input type="file" id="input-import-hist" accept=".xlsx,.xls" style="display:none;">
+      </div>
+      <div id="hist-mobile"></div>
+      <div id="hist-desktop" class="card" style="display:none; overflow-x:auto;"></div>
+    </section>
+
+    <!-- ================= VISTA ECONOMIA ================= -->
+    <section class="view" id="view-economia">
+      <h2 class="view-title">Control de Economía</h2>
+
+      <div class="card">
+        <div class="month-nav">
+          <button id="mes-prev">‹</button>
+          <span class="month-label" id="mes-label">—</span>
+          <button id="mes-next">›</button>
+        </div>
+        <div class="cal-grid" id="cal-dows"></div>
+        <div class="cal-grid" id="cal-grid" style="margin-top:6px;"></div>
+        <div class="legend">
+          <span><i style="background:var(--verde)"></i> Meta cumplida (≥$1000)</span>
+          <span><i style="background:var(--amarillo)"></i> Levemente bajo ($900-999)</span>
+          <span><i style="background:var(--naranja)"></i> Bajo ($750-899)</span>
+          <span><i style="background:var(--rojo)"></i> Muy bajo (&lt;$750)</span>
+          <span><i style="background:var(--gris)"></i> Sin registro</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="dot"></span>Evolución del mes</h3>
+        <canvas id="chart-mes" height="220"></canvas>
+      </div>
+
+      <div class="card">
+        <h3><span class="dot"></span>Cierre del mes</h3>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="k">Total del mes</div><div class="v" id="st-total">$0</div></div>
+          <div class="stat-box"><div class="k">Promedio diario</div><div class="v" id="st-prom">$0</div></div>
+          <div class="stat-box"><div class="k">Mejor día</div><div class="v" id="st-mejor">—</div></div>
+          <div class="stat-box"><div class="k">Peor día</div><div class="v" id="st-peor">—</div></div>
+        </div>
+        <div class="stat-grid" style="margin-top:10px;">
+          <div class="stat-box"><div class="k">Días verdes</div><div class="v" id="st-verde">0</div></div>
+          <div class="stat-box"><div class="k">Días amarillos</div><div class="v" id="st-amarillo">0</div></div>
+          <div class="stat-box"><div class="k">Días naranjas</div><div class="v" id="st-naranja">0</div></div>
+          <div class="stat-box"><div class="k">Días rojos</div><div class="v" id="st-rojo">0</div></div>
+        </div>
+        <p class="analysis-text" id="analysis-text" style="margin-top:14px;">Todavía no hay datos suficientes para analizar el mes.</p>
+        <div class="actions-row">
+          <button class="btn secondary" id="btn-export-eco">⬇ Descargar Excel (Control de Economía)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VISTA RESUMEN MENSUAL ================= -->
+    <section class="view" id="view-resumen">
+      <h2 class="view-title">Resumen mes a mes</h2>
+      <div id="resumen-mobile"></div>
+      <div id="resumen-desktop" class="card" style="display:none; overflow-x:auto;"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   ESTADO Y PERSISTENCIA
+   ============================================================ */
+const STORAGE_KEY = 'liquidaciones-historial';
+let historial = {}; // { 'YYYY-MM-DD': record }
+let chartMes = null;
+let currentMonthCursor = new Date(); // control de que mes se ve en Economía
+
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+async function storageGet(key){
+  try{
+    if (window.storage){
+      const res = await window.storage.get(key, false);
+      return res ? res.value : null;
+    } else {
+      return localStorage.getItem(key);
+    }
+  }catch(e){ return null; }
+}
+async function storageSet(key, value){
+  try{
+    if (window.storage){
+      await window.storage.set(key, value, false);
+    } else {
+      localStorage.setItem(key, value);
+    }
+    return true;
+  }catch(e){ return false; }
+}
+async function storageRemove(key){
+  try{
+    if (window.storage){
+      await window.storage.delete(key, false);
+    } else {
+      localStorage.removeItem(key);
+    }
+  }catch(e){ /* ignorar */ }
+}
+
+async function loadHistorial(){
+  const raw = await storageGet(STORAGE_KEY);
+  try{ historial = raw ? JSON.parse(raw) : {}; }catch(e){ historial = {}; }
+}
+async function saveHistorial(){
+  return await storageSet(STORAGE_KEY, JSON.stringify(historial));
+}
+
+/* ============================================================
+   CALCULO DE LA PLANILLA
+   ============================================================ */
+function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+function compute(input){
+  const total = num(input.total);
+  const viatico = num(input.viatico);
+  const combustible = num(input.combustible);
+  const aceite = num(input.aceite);
+  const gomeria = num(input.gomeria);
+  const lavado = num(input.lavado);
+  const h13 = num(input.h13);
+  const tarjeta = num(input.tarjeta);
+  const efectivo = num(input.efectivo);
+  const kmEntrada = num(input.kmEntrada);
+  const kmSalida = num(input.kmSalida);
+  const coche = (input.coche || '').trim();
+  const complementada = !!input.complementada;
+  const esHabitual = (coche === '2851') && !complementada;
+
+  const salario = total * 0.29;
+  const otros = esHabitual ? num(input.otros) : total * 0.04;
+  const gastos = salario + viatico + combustible + aceite + gomeria + lavado + otros;
+  const liquido = total - gastos;
+  const aporteLeyes = esHabitual ? salario * 0.196 : 0;
+  const subTotal = liquido + aporteLeyes;
+  const totalFinal = subTotal - h13 - tarjeta;
+  const totalReal = totalFinal + efectivo;
+  const kmTotal = kmSalida - kmEntrada;
+
+  return { total, viatico, combustible, aceite, gomeria, lavado, h13, tarjeta, efectivo,
+    kmEntrada, kmSalida, coche, complementada, esHabitual,
+    salario, otros, gastos, liquido, aporteLeyes, subTotal, totalFinal, totalReal, kmTotal };
+}
+
+function money(n){
+  const sign = n < 0 ? '-' : '';
+  return sign + '$' + Math.round(Math.abs(n)).toLocaleString('es-UY');
+}
+
+function colorFor(totalReal){
+  if (totalReal >= 1000) return {name:'verde', hex:'#2E7D46', bg:'#E4F2E8', label:'Meta cumplida'};
+  if (totalReal >= 900)  return {name:'amarillo', hex:'#B8862B', bg:'#FBF0DA', label:'Levemente bajo'};
+  if (totalReal >= 750)  return {name:'naranja', hex:'#C9642E', bg:'#FBE7DA', label:'Bajo la meta'};
+  return {name:'rojo', hex:'#B33A3A', bg:'#F7E1E1', label:'Muy bajo'};
+}
+
+/* ============================================================
+   VISTA TURNO
+   ============================================================ */
+const formIds = ['fecha','coche','kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo'];
+
+function getFormInput(){
+  const g = id => document.getElementById('f-'+id);
+  return {
+    fecha: g('fecha').value || todayISO(),
+    coche: g('coche').value,
+    complementada: g('complementada').checked,
+    kmEntrada: g('kmEntrada').value,
+    kmSalida: g('kmSalida').value,
+    total: g('total').value,
+    viatico: g('viatico').value,
+    combustible: g('combustible').value,
+    aceite: g('aceite').value,
+    gomeria: g('gomeria').value,
+    lavado: g('lavado').value,
+    otros: g('otros').value,
+    h13: g('h13').value,
+    tarjeta: g('tarjeta').value,
+    efectivo: g('efectivo').value
+  };
+}
+
+function refreshFormComputed(){
+  const input = getFormInput();
+  const c = compute(input);
+  document.getElementById('f-kmTotal').value = isFinite(c.kmTotal) ? c.kmTotal : 0;
+  document.getElementById('f-salario').value = money(c.salario);
+  document.getElementById('f-gastos').value = money(c.gastos);
+  document.getElementById('f-liquido').value = money(c.liquido);
+  document.getElementById('f-aporteLeyes').value = money(c.aporteLeyes);
+  document.getElementById('f-subTotal').value = money(c.subTotal);
+  document.getElementById('f-totalFinal').value = money(c.totalFinal);
+  document.getElementById('f-totalReal').textContent = money(c.totalReal);
+
+  const otrosField = document.getElementById('f-otros');
+  if (!c.esHabitual){
+    otrosField.value = Math.round(c.otros);
+    otrosField.readOnly = true;
+    otrosField.classList.add('auto');
+  } else {
+    otrosField.readOnly = false;
+    otrosField.classList.remove('auto');
+  }
+  document.getElementById('coche-sub').textContent = 'COCHE Nº ' + (input.coche || '—') + ' · REGISTRO PRIVADO';
+}
+
+function clearForm(){
+  document.getElementById('f-fecha').value = todayISO();
+  document.getElementById('f-coche').value = '2851';
+  document.getElementById('f-complementada').checked = false;
+  ['kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo'].forEach(id=>{
+    document.getElementById('f-'+id).value = '';
+  });
+  refreshFormComputed();
+}
+
+function loadRecordIntoForm(dateKey){
+  const r = historial[dateKey];
+  if (!r) return;
+  document.getElementById('f-fecha').value = dateKey;
+  document.getElementById('f-coche').value = r.coche;
+  document.getElementById('f-complementada').checked = r.complementada;
+  document.getElementById('f-kmEntrada').value = r.kmEntrada || '';
+  document.getElementById('f-kmSalida').value = r.kmSalida || '';
+  document.getElementById('f-total').value = r.total || '';
+  document.getElementById('f-viatico').value = r.viatico || '';
+  document.getElementById('f-combustible').value = r.combustible || '';
+  document.getElementById('f-aceite').value = r.aceite || '';
+  document.getElementById('f-gomeria').value = r.gomeria || '';
+  document.getElementById('f-lavado').value = r.lavado || '';
+  document.getElementById('f-otros').value = r.otros || '';
+  document.getElementById('f-h13').value = r.h13 || '';
+  document.getElementById('f-tarjeta').value = r.tarjeta || '';
+  document.getElementById('f-efectivo').value = r.efectivo || '';
+  refreshFormComputed();
+  switchView('turno');
+}
+
+async function guardarTurno(){
+  const input = getFormInput();
+  const dateKey = input.fecha;
+  if (historial[dateKey]){
+    const ok = confirm('Ya existe una liquidación guardada para el ' + dateKey + '. ¿Querés reemplazarla con estos datos?');
+    if (!ok) return;
+  }
+  const c = compute(input);
+  historial[dateKey] = { ...input, ...c, savedAt: new Date().toISOString() };
+  const ok = await saveHistorial();
+  if (ok){
+    renderHistorial();
+    renderEconomia();
+    alert('Turno guardado para el ' + dateKey + '.');
+  } else {
+    alert('No se pudo guardar el turno. Intentá de nuevo.');
+  }
+}
+
+/* ============================================================
+   VISTA HISTORIAL
+   ============================================================ */
+function renderHistorial(){
+  const dates = Object.keys(historial).sort().reverse();
+  const mobileEl = document.getElementById('hist-mobile');
+  const desktopEl = document.getElementById('hist-desktop');
+
+  if (dates.length === 0){
+    mobileEl.innerHTML = '<div class="empty">Todavía no guardaste ningún turno.<br>Completá la planilla y tocá "Guardar turno".</div>';
+    desktopEl.innerHTML = mobileEl.innerHTML;
+    return;
+  }
+
+  mobileEl.innerHTML = dates.map(d => ticketHTML(d, historial[d])).join('');
+  desktopEl.innerHTML = tableHTML(dates);
+
+  mobileEl.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', ()=>loadRecordIntoForm(b.dataset.edit)));
+  mobileEl.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', ()=>eliminarTurno(b.dataset.del)));
+  desktopEl.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', ()=>loadRecordIntoForm(b.dataset.edit)));
+  desktopEl.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', ()=>eliminarTurno(b.dataset.del)));
+}
+
+function ticketHTML(dateKey, r){
+  const col = colorFor(r.totalReal);
+  return `
+  <div class="ticket">
+    <div class="ticket-head">
+      <span class="fecha">${dateKey}</span>
+      <span class="status-chip" style="background:${col.bg};color:${col.hex}">${col.label}</span>
+    </div>
+    <div class="ticket-row"><span>Coche</span><span>${r.coche}${r.complementada ? ' (compl.)' : ''}</span></div>
+    <div class="ticket-row"><span>Total facturado</span><span>${money(r.total)}</span></div>
+    <div class="ticket-row"><span>Gastos</span><span>${money(r.gastos)}</span></div>
+    <div class="ticket-row"><span>Líquido</span><span>${money(r.liquido)}</span></div>
+    <div class="ticket-row"><span>TOTAL final</span><span>${money(r.totalFinal)}</span></div>
+    <div class="ticket-row"><span>Efectivo en mano</span><span>${money(r.efectivo)}</span></div>
+    <div class="ticket-row strong"><span>TOTAL REAL</span><span>${money(r.totalReal)}</span></div>
+    <div class="ticket-actions">
+      <button class="btn secondary" data-edit="${dateKey}">Editar</button>
+      <button class="btn danger" data-del="${dateKey}">Eliminar</button>
+    </div>
+  </div>`;
+}
+
+function tableHTML(dates){
+  const rows = dates.map(d=>{
+    const r = historial[d];
+    const col = colorFor(r.totalReal);
+    return `<tr>
+      <td>${d}</td>
+      <td>${r.coche}${r.complementada?' *':''}</td>
+      <td>${money(r.total)}</td>
+      <td>${money(r.gastos)}</td>
+      <td>${money(r.totalFinal)}</td>
+      <td>${money(r.totalReal)}</td>
+      <td><span class="status-dot" style="background:${col.hex}"></span></td>
+      <td class="tbl-actions">
+        <button data-edit="${d}">Editar</button>
+        <button class="del" data-del="${d}">Eliminar</button>
+      </td>
+    </tr>`;
+  }).join('');
+  return `<table class="hist-table">
+    <thead><tr>
+      <th>Fecha</th><th>Coche</th><th>Total</th><th>Gastos</th><th>Total final</th><th>Total real</th><th>Estado</th><th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+async function eliminarTurno(dateKey){
+  const ok = confirm('¿Eliminar la liquidación del ' + dateKey + '? Esta acción no se puede deshacer.');
+  if (!ok) return;
+  delete historial[dateKey];
+  await saveHistorial();
+  renderHistorial();
+  renderEconomia();
+}
+
+function exportHistorialExcel(){
+  const dates = Object.keys(historial).sort();
+  if (dates.length === 0){ alert('No hay turnos guardados todavía.'); return; }
+  const rows = dates.map(d=>{
+    const r = historial[d];
+    return {
+      Fecha: d, 'Coche N°': r.coche, Complementada: r.complementada ? 'Sí' : 'No',
+      'Km entrada': r.kmEntrada, 'Km salida': r.kmSalida, 'Km total': r.kmTotal,
+      'Total facturado': r.total, Salario: Math.round(r.salario), Viatico: r.viatico,
+      Combustible: r.combustible, Aceite: r.aceite, Gomeria: r.gomeria, Lavado: r.lavado,
+      Otros: Math.round(r.otros), Gastos: Math.round(r.gastos), Liquido: Math.round(r.liquido),
+      'Aporte Leyes': Math.round(r.aporteLeyes), 'Sub Total': Math.round(r.subTotal),
+      H13: r.h13, 'Tarjeta Créd.': r.tarjeta, 'TOTAL final': Math.round(r.totalFinal),
+      'Efectivo en mano': r.efectivo, 'TOTAL REAL': Math.round(r.totalReal)
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
+  XLSX.writeFile(wb, 'liquidaciones_de_viajes.xlsx');
+}
+
+function importHistorialExcel(file){
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try{
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const sheetName = wb.SheetNames.includes('Liquidaciones') ? 'Liquidaciones' : wb.SheetNames[0];
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+      if (rows.length === 0){ alert('El archivo no tiene filas para restaurar.'); return; }
+
+      const ok = confirm(`Se encontraron ${rows.length} turnos en el archivo. Los que coincidan en fecha con turnos ya guardados van a reemplazarse. ¿Continuar?`);
+      if (!ok) return;
+
+      let importados = 0;
+      rows.forEach(row=>{
+        const fecha = row['Fecha'];
+        if (!fecha) return;
+        const input = {
+          fecha,
+          coche: String(row['Coche N°'] ?? '2851'),
+          complementada: row['Complementada'] === 'Sí',
+          kmEntrada: row['Km entrada'] || 0,
+          kmSalida: row['Km salida'] || 0,
+          total: row['Total facturado'] || 0,
+          viatico: row['Viatico'] || 0,
+          combustible: row['Combustible'] || 0,
+          aceite: row['Aceite'] || 0,
+          gomeria: row['Gomeria'] || 0,
+          lavado: row['Lavado'] || 0,
+          otros: row['Otros'] || 0,
+          h13: row['H13'] || 0,
+          tarjeta: row['Tarjeta Créd.'] || 0,
+          efectivo: row['Efectivo en mano'] || 0
+        };
+        const c = compute(input);
+        historial[fecha] = { ...input, ...c, savedAt: new Date().toISOString() };
+        importados++;
+      });
+
+      await saveHistorial();
+      renderHistorial();
+      renderEconomia();
+      alert(`Se restauraron ${importados} turnos desde el Excel.`);
+    }catch(err){
+      console.error(err);
+      alert('No se pudo leer el archivo. Asegurate de subir un Excel exportado desde esta misma app.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ============================================================
+   VISTA ECONOMIA
+   ============================================================ */
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DOWS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+function isoOfDay(year, month, day){
+  return year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+}
+
+function renderEconomia(){
+  const year = currentMonthCursor.getFullYear();
+  const month = currentMonthCursor.getMonth();
+  document.getElementById('mes-label').textContent = MESES[month] + ' ' + year;
+
+  // Dow header (solo una vez, pero lo re-renderizamos igual, es barato)
+  document.getElementById('cal-dows').innerHTML = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  const firstDay = new Date(year, month, 1);
+  const startOffset = (firstDay.getDay() + 6) % 7; // lunes = 0
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const todayKey = todayISO();
+
+  let cells = '';
+  for (let i=0;i<startOffset;i++) cells += '<div class="cal-cell empty-cell"></div>';
+  const monthValues = [];
+  for (let day=1; day<=daysInMonth; day++){
+    const key = isoOfDay(year, month, day);
+    const rec = historial[key];
+    let bg = 'var(--gris-bg)', fg = 'var(--gris)', hasData = false;
+    if (rec){
+      const col = colorFor(rec.totalReal);
+      bg = col.bg; fg = col.hex; hasData = true;
+      monthValues.push({date:key, day, totalReal:rec.totalReal, color:col});
+    }
+    const isToday = key === todayKey ? ' today' : '';
+    cells += `<div class="cal-cell${hasData?' has-data':''}${isToday}" style="background:${bg};color:${fg}" title="${hasData? key+': '+money(rec.totalReal) : key+': sin registro'}">${day}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = cells;
+
+  // Chart
+  const labels = monthValues.map(v=>v.day);
+  const data = monthValues.map(v=>v.totalReal);
+  const pointColors = monthValues.map(v=>v.color.hex);
+  const ctx = document.getElementById('chart-mes').getContext('2d');
+  if (chartMes) chartMes.destroy();
+  chartMes = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Total Real',
+          data,
+          borderColor:'#0F5C5C',
+          backgroundColor:'rgba(15,92,92,0.08)',
+          pointBackgroundColor:pointColors,
+          pointRadius:5,
+          tension:0.25,
+          fill:true
+        },
+        {
+          label:'Meta ($1000)',
+          data: labels.map(()=>1000),
+          borderColor:'#B33A3A',
+          borderDash:[6,5],
+          pointRadius:0,
+          fill:false
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter'}, boxWidth:12 } } },
+      scales:{
+        x:{ title:{display:true, text:'Día del mes'} },
+        y:{ beginAtZero:true, ticks:{ callback:v=>'$'+v } }
+      }
+    }
+  });
+
+  // Stats
+  const vals = monthValues.map(v=>v.totalReal);
+  const total = vals.reduce((a,b)=>a+b,0);
+  const prom = vals.length ? total/vals.length : 0;
+  document.getElementById('st-total').textContent = money(total);
+  document.getElementById('st-prom').textContent = money(prom);
+
+  if (vals.length){
+    const best = monthValues.reduce((a,b)=> b.totalReal>a.totalReal ? b : a);
+    const worst = monthValues.reduce((a,b)=> b.totalReal<a.totalReal ? b : a);
+    document.getElementById('st-mejor').textContent = best.date.slice(-2)+'/'+(month+1)+' · '+money(best.totalReal);
+    document.getElementById('st-peor').textContent = worst.date.slice(-2)+'/'+(month+1)+' · '+money(worst.totalReal);
+  } else {
+    document.getElementById('st-mejor').textContent = '—';
+    document.getElementById('st-peor').textContent = '—';
+  }
+
+  const counts = {verde:0, amarillo:0, naranja:0, rojo:0};
+  monthValues.forEach(v=> counts[v.color.name]++ );
+  document.getElementById('st-verde').textContent = counts.verde;
+  document.getElementById('st-amarillo').textContent = counts.amarillo;
+  document.getElementById('st-naranja').textContent = counts.naranja;
+  document.getElementById('st-rojo').textContent = counts.rojo;
+
+  // Analysis vs mes anterior
+  const prevCursor = new Date(year, month-1, 1);
+  const prevValues = [];
+  const daysPrev = new Date(prevCursor.getFullYear(), prevCursor.getMonth()+1, 0).getDate();
+  for (let day=1; day<=daysPrev; day++){
+    const key = isoOfDay(prevCursor.getFullYear(), prevCursor.getMonth(), day);
+    if (historial[key]) prevValues.push(historial[key].totalReal);
+  }
+  const promPrev = prevValues.length ? prevValues.reduce((a,b)=>a+b,0)/prevValues.length : null;
+
+  const analysisEl = document.getElementById('analysis-text');
+  if (vals.length === 0){
+    analysisEl.textContent = 'Todavía no hay turnos guardados para ' + MESES[month] + '.';
+  } else {
+    let calidad;
+    if (prom >= 1000) calidad = 'un buen mes: el promedio diario superó la meta de $1000';
+    else if (prom >= 850) calidad = 'un mes aceptable, aunque el promedio quedó por debajo de la meta de $1000';
+    else calidad = 'un mes flojo, con el promedio bastante por debajo de la meta de $1000';
+
+    let comparacion = '';
+    if (promPrev !== null && promPrev > 0){
+      const cambio = ((prom - promPrev) / promPrev) * 100;
+      const dir = cambio >= 0 ? 'mejor' : 'peor';
+      comparacion = ` Comparado con el mes anterior (promedio ${money(promPrev)}), este mes viene un ${Math.abs(cambio).toFixed(1)}% ${dir}.`;
+    }
+
+    const diasVerdes = counts.verde;
+    const totalDias = vals.length;
+    analysisEl.textContent = `${MESES[month]} viene siendo ${calidad}. El promedio diario es ${money(prom)}, con ${diasVerdes} de ${totalDias} días alcanzando la meta.${comparacion}`;
+  }
+}
+
+function exportEconomiaExcel(){
+  const dates = Object.keys(historial).sort();
+  if (dates.length === 0){ alert('No hay datos guardados todavía.'); return; }
+  const daily = dates.map(d=>{
+    const r = historial[d];
+    const col = colorFor(r.totalReal);
+    return { Fecha:d, 'Total Real': Math.round(r.totalReal), Estado: col.label };
+  });
+
+  const byMonth = {};
+  dates.forEach(d=>{
+    const key = d.slice(0,7);
+    byMonth[key] = byMonth[key] || [];
+    byMonth[key].push(historial[d].totalReal);
+  });
+  const monthly = Object.keys(byMonth).sort().map(k=>{
+    const vals = byMonth[k];
+    const total = vals.reduce((a,b)=>a+b,0);
+    const prom = total/vals.length;
+    return { Mes:k, 'Total del mes':Math.round(total), 'Promedio diario':Math.round(prom), 'Días registrados':vals.length };
+  });
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(daily), 'Control diario');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(monthly), 'Cortes mensuales');
+  XLSX.writeFile(wb, 'control_de_economia.xlsx');
+}
+
+/* ============================================================
+   VISTA RESUMEN MENSUAL
+   ============================================================ */
+function monthLabel(key){
+  const [y,m] = key.split('-').map(Number);
+  return MESES[m-1] + ' ' + y;
+}
+
+function buildMonthlySummary(){
+  const byMonth = {};
+  Object.keys(historial).forEach(dateKey=>{
+    const monthKey = dateKey.slice(0,7);
+    const r = historial[dateKey];
+    if (!byMonth[monthKey]) byMonth[monthKey] = { total:0, verde:0, amarillo:0, naranja:0, rojo:0, dias:0 };
+    const b = byMonth[monthKey];
+    b.total += r.totalReal;
+    b.dias += 1;
+    b[colorFor(r.totalReal).name] += 1;
+  });
+  return Object.keys(byMonth).sort().reverse().map(k=>({ key:k, ...byMonth[k] }));
+}
+
+function renderResumenMensual(){
+  const meses = buildMonthlySummary();
+  const mobileEl = document.getElementById('resumen-mobile');
+  const desktopEl = document.getElementById('resumen-desktop');
+
+  if (meses.length === 0){
+    mobileEl.innerHTML = '<div class="empty">Todavía no hay meses con turnos guardados.</div>';
+    desktopEl.innerHTML = mobileEl.innerHTML;
+    return;
+  }
+
+  mobileEl.innerHTML = meses.map(m => `
+    <div class="month-card">
+      <div class="mc-head">
+        <span class="mes">${monthLabel(m.key)}</span>
+        <span class="total">${money(m.total)}</span>
+      </div>
+      <div class="mc-counts">
+        <span><i style="background:var(--verde)"></i> ${m.verde} buenos</span>
+        <span><i style="background:var(--amarillo)"></i> ${m.amarillo} normales</span>
+        <span><i style="background:var(--naranja)"></i> ${m.naranja} flojos</span>
+        <span><i style="background:var(--rojo)"></i> ${m.rojo} malos</span>
+        <span>${m.dias} días registrados</span>
+      </div>
+    </div>`).join('');
+
+  desktopEl.innerHTML = `<table class="hist-table">
+    <thead><tr>
+      <th>Mes</th><th>Total recaudado</th><th>Buenos</th><th>Normales</th><th>Flojos</th><th>Malos</th><th>Días registrados</th>
+    </tr></thead>
+    <tbody>${meses.map(m=>`<tr>
+      <td>${monthLabel(m.key)}</td>
+      <td>${money(m.total)}</td>
+      <td><span class="status-dot" style="background:var(--verde)"></span> ${m.verde}</td>
+      <td><span class="status-dot" style="background:var(--amarillo)"></span> ${m.amarillo}</td>
+      <td><span class="status-dot" style="background:var(--naranja)"></span> ${m.naranja}</td>
+      <td><span class="status-dot" style="background:var(--rojo)"></span> ${m.rojo}</td>
+      <td>${m.dias}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+/* ============================================================
+   AUTENTICACION (usuario/contraseña + recordar + huella)
+   ============================================================ */
+const AUTH_KEY = 'auth-config';
+const REMEMBER_KEY = 'auth-remember-flag';
+
+async function sha256(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function getAuthConfig(){
+  const raw = await storageGet(AUTH_KEY);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function setAuthConfig(cfg){ await storageSet(AUTH_KEY, JSON.stringify(cfg)); }
+
+async function biometricAvailable(){
+  try{
+    return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+  }catch(e){ return false; }
+}
+
+async function registerBiometric(username){
+  try{
+    const cred = await navigator.credentials.create({
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp:{ name:'Liquidación de Viajes' },
+        user:{ id: crypto.getRandomValues(new Uint8Array(16)), name: username, displayName: username },
+        pubKeyCredParams:[{alg:-7,type:'public-key'},{alg:-257,type:'public-key'}],
+        authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
+        timeout:60000
+      }
+    });
+    return cred ? btoa(String.fromCharCode(...new Uint8Array(cred.rawId))) : null;
+  }catch(e){ return null; }
+}
+
+async function loginWithBiometric(credIdBase64){
+  try{
+    const rawId = Uint8Array.from(atob(credIdBase64), c=>c.charCodeAt(0));
+    const assertion = await navigator.credentials.get({
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        allowCredentials:[{ id: rawId, type:'public-key', transports:['internal'] }],
+        userVerification:'required',
+        timeout:60000
+      }
+    });
+    return !!assertion;
+  }catch(e){ return false; }
+}
+
+function showLock(view){
+  document.getElementById('lock-screen').style.display = 'flex';
+  document.getElementById('lock-setup').style.display = view === 'setup' ? 'block' : 'none';
+  document.getElementById('lock-login').style.display = view === 'login' ? 'block' : 'none';
+}
+function hideLock(){ document.getElementById('lock-screen').style.display = 'none'; }
+
+async function showLoginScreen(cfg){
+  showLock('login');
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  const bioOk = cfg.bioCredId && await biometricAvailable();
+  document.getElementById('bio-divider').style.display = bioOk ? 'flex' : 'none';
+  document.getElementById('btn-bio-login').style.display = bioOk ? 'block' : 'none';
+}
+
+async function handleSetupSubmit(){
+  const user = document.getElementById('setup-user').value.trim();
+  const pass = document.getElementById('setup-pass').value;
+  const pass2 = document.getElementById('setup-pass2').value;
+  const errEl = document.getElementById('setup-error');
+  if (!user || !pass){ errEl.textContent = 'Completá usuario y contraseña.'; errEl.style.display='block'; return; }
+  if (pass !== pass2){ errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display='block'; return; }
+
+  const cfg = { username: user, passHash: await sha256(pass), bioCredId: null };
+  if (document.getElementById('setup-bio').checked && await biometricAvailable()){
+    const credId = await registerBiometric(user);
+    if (credId) cfg.bioCredId = credId;
+  }
+  await setAuthConfig(cfg);
+  await storageSet(REMEMBER_KEY, 'yes');
+  hideLock();
+  appInit();
+}
+
+async function handleLoginSubmit(){
+  const cfg = await getAuthConfig();
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const passHash = await sha256(pass);
+  if (user !== cfg.username || passHash !== cfg.passHash){
+    errEl.textContent = 'Usuario o contraseña incorrectos.'; errEl.style.display = 'block'; return;
+  }
+  await storageSet(REMEMBER_KEY, document.getElementById('login-remember').checked ? 'yes' : 'no');
+  hideLock();
+  appInit();
+}
+
+async function handleBioLogin(){
+  const cfg = await getAuthConfig();
+  const errEl = document.getElementById('login-error');
+  if (!cfg || !cfg.bioCredId){ return; }
+  const ok = await loginWithBiometric(cfg.bioCredId);
+  if (ok){ hideLock(); appInit(); }
+  else { errEl.textContent = 'No se pudo validar la huella. Probá con la contraseña.'; errEl.style.display = 'block'; }
+}
+
+async function logout(){
+  const ok = confirm('¿Cerrar sesión? Vas a tener que ingresar tu usuario y contraseña de nuevo.');
+  if (!ok) return;
+  await storageSet(REMEMBER_KEY, 'no');
+  location.reload();
+}
+
+async function authGate(){
+  const cfg = await getAuthConfig();
+  if (!cfg){
+    showLock('setup');
+    document.getElementById('setup-bio').parentElement.style.display = (await biometricAvailable()) ? 'flex' : 'none';
+    return;
+  }
+  const remembered = (await storageGet(REMEMBER_KEY)) === 'yes';
+  if (remembered){ hideLock(); appInit(); }
+  else { await showLoginScreen(cfg); }
+}
+
+/* ============================================================
+   NAVEGACION
+   ============================================================ */
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('#navbar button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+  if (name === 'economia') renderEconomia();
+  if (name === 'historial') renderHistorial();
+  if (name === 'resumen') renderResumenMensual();
+}
+
+/* ============================================================
+   PWA: manifest e instalación
+   ============================================================ */
+function setupPWA(){
+  const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23201D1A'/%3E%3Cg fill='%230F5C5C'%3E%3Crect x='0' y='0' width='20' height='20'/%3E%3Crect x='40' y='0' width='20' height='20'/%3E%3Crect x='80' y='0' width='20' height='20'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Crect x='60' y='20' width='20' height='20'/%3E%3Crect x='0' y='40' width='20' height='20'/%3E%3Crect x='40' y='40' width='20' height='20'/%3E%3Crect x='80' y='40' width='20' height='20'/%3E%3Crect x='20' y='60' width='20' height='20'/%3E%3Crect x='60' y='60' width='20' height='20'/%3E%3Crect x='0' y='80' width='20' height='20'/%3E%3Crect x='40' y='80' width='20' height='20'/%3E%3Crect x='80' y='80' width='20' height='20'/%3E%3C/g%3E%3C/svg%3E";
+  const manifest = {
+    name: "Liquidación de Viajes",
+    short_name: "Liquidación",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#F7F4EC",
+    theme_color: "#0F5C5C",
+    icons: [
+      { src: icon, sizes: "any", type: "image/svg+xml" }
+    ]
+  };
+  try{
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+  }catch(e){ /* si falla, la app sigue funcionando igual sin manifest */ }
+
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+    const swCode = `
+      self.addEventListener('install', e => self.skipWaiting());
+      self.addEventListener('activate', e => self.clients.claim());
+      self.addEventListener('fetch', e => {});
+    `;
+    try{
+      const swBlob = new Blob([swCode], {type:'text/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+    }catch(e){ /* silencioso: sin service worker la app sigue funcionando online */ }
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+async function appInit(){
+  setupPWA();
+  document.getElementById('today-pill').textContent = new Date().toLocaleDateString('es-UY');
+  await loadHistorial();
+
+  document.getElementById('f-fecha').value = todayISO();
+
+  formIds.forEach(id=>{
+    const el = document.getElementById('f-'+id);
+    if (el) el.addEventListener('input', refreshFormComputed);
+  });
+  document.getElementById('f-complementada').addEventListener('change', refreshFormComputed);
+  document.getElementById('f-coche').addEventListener('input', refreshFormComputed);
+
+  document.getElementById('btn-guardar').addEventListener('click', guardarTurno);
+  document.getElementById('btn-nuevo').addEventListener('click', ()=>{
+    if (confirm('¿Vaciar el formulario para empezar un turno nuevo?')) clearForm();
+  });
+  document.getElementById('btn-export-hist').addEventListener('click', exportHistorialExcel);
+  document.getElementById('btn-export-eco').addEventListener('click', exportEconomiaExcel);
+  document.getElementById('btn-import-hist').addEventListener('click', ()=>{
+    document.getElementById('input-import-hist').click();
+  });
+  document.getElementById('input-import-hist').addEventListener('change', (e)=>{
+    if (e.target.files[0]) importHistorialExcel(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.getElementById('btn-logout').addEventListener('click', logout);
+
+  document.getElementById('mes-prev').addEventListener('click', ()=>{
+    currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()-1, 1);
+    renderEconomia();
+  });
+  document.getElementById('mes-next').addEventListener('click', ()=>{
+    currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()+1, 1);
+    renderEconomia();
+  });
+
+  document.querySelectorAll('#navbar button').forEach(b=>{
+    b.addEventListener('click', ()=>switchView(b.dataset.view));
+  });
+
+  refreshFormComputed();
+  renderHistorial();
+}
+
+function init(){
+  document.getElementById('btn-setup').addEventListener('click', handleSetupSubmit);
+  document.getElementById('btn-login').addEventListener('click', handleLoginSubmit);
+  document.getElementById('btn-bio-login').addEventListener('click', handleBioLogin);
+  authGate();
+}
+
+init();
+</script>
+</body>
+</html>
