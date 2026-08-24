@@ -37,7 +37,7 @@
   @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important;} }
   button, input, select{font-family:inherit; font-size:inherit;}
   :focus-visible{outline:2px solid var(--petrol); outline-offset:2px;}
- 
+
   #app{max-width:1180px; margin:0 auto; padding-bottom:84px;}
   .app-hidden{display:none!important;}
   .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 18px 14px; border-bottom:1px solid var(--line); position:relative;}
@@ -58,21 +58,21 @@
   }
   .dropdown-menu button:hover{background:var(--paper-2);}
   .dropdown-menu button.danger{color:var(--rojo);}
- 
+
   main{padding:16px;}
   .view{display:none;}
   .view.active{display:block;}
   h2.view-title{font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin:4px 0 14px; font-weight:700;}
- 
+
   .card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; box-shadow:var(--shadow);}
   .card h3{margin:0 0 12px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px;}
   .card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--petrol);}
- 
+
   .grid{display:grid; gap:12px;}
   .grid-2{grid-template-columns:1fr 1fr;}
   .grid-3{grid-template-columns:1fr 1fr 1fr;}
   @media (max-width:640px){ .grid-2, .grid-3{grid-template-columns:1fr 1fr;} }
- 
+
   label{display:block; font-size:11px; color:var(--ink-soft); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
   input[type=text], input[type=number], input[type=date], input[type=time], input[type=password], select{
     width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--ink); font-family:var(--mono); font-size:14px;
@@ -81,11 +81,11 @@
   .checkline{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink); margin-top:8px;}
   .checkline input{width:16px; height:16px;}
   .hint{font-size:11px; color:var(--ink-soft); margin-top:6px; line-height:1.4;}
- 
+
   .result-big{display:flex; align-items:baseline; justify-content:space-between; background:var(--ink); color:var(--paper); border-radius:var(--radius); padding:16px 18px; margin-top:2px;}
   .result-big .label{font-size:12px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.75;}
   .result-big .value{font-family:var(--mono); font-size:26px; font-weight:700;}
- 
+
   .btn{display:inline-flex; align-items:center; gap:8px; justify-content:center; background:var(--petrol); color:#fff; border:none; border-radius:8px; padding:11px 16px; font-weight:700; font-size:13px; cursor:pointer;}
   .btn:hover{background:var(--petrol-dark);}
   .btn.secondary{background:#fff; color:var(--ink); border:1px solid var(--line);}
@@ -94,7 +94,7 @@
   .btn.danger{background:#fff; color:var(--rojo); border:1px solid var(--rojo);}
   .btn:disabled{opacity:0.5; cursor:not-allowed;}
   .actions-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
- 
+
   .ticket{background:#fff; border:1px dashed var(--line); border-radius:2px; font-family:var(--mono); padding:14px 16px; margin-bottom:12px; position:relative; cursor:pointer;}
   .ticket::before, .ticket::after{content:""; position:absolute; left:0; right:0; height:8px; background-image: radial-gradient(circle at 6px 4px, var(--paper) 4px, transparent 4.5px); background-size: 14px 8px; background-repeat:repeat-x;}
   .ticket::before{top:-4px;}
@@ -104,14 +104,14 @@
   .ticket-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
   .ticket-head .fecha{font-weight:700; font-size:13px;}
   .status-chip{font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:0.04em;}
- 
+
   table.hist-table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12.5px;}
   table.hist-table th{text-align:left; font-family:var(--sans); text-transform:uppercase; letter-spacing:0.04em; font-size:10.5px; color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--ink);}
   table.hist-table td{padding:9px 10px; border-bottom:1px solid var(--line);}
   table.hist-table tr:hover td{background:var(--paper-2); cursor:pointer;}
   .status-dot{width:10px;height:10px;border-radius:50%; display:inline-block;}
   .empty{text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:13px;}
- 
+
   .month-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
   .month-nav .month-label{font-weight:800; font-size:15px;}
   .month-nav button{background:#fff; border:1px solid var(--line); border-radius:7px; width:32px; height:32px; cursor:pointer; font-size:14px;}
@@ -125,7 +125,7 @@
   .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:var(--ink-soft);}
   .legend span{display:inline-flex; align-items:center; gap:5px;}
   .legend i{width:9px; height:9px; border-radius:50%; display:inline-block;}
- 
+
   .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
   @media (max-width:760px){.stat-grid{grid-template-columns:1fr 1fr;}}
   .stat-box{background:var(--paper-2); border-radius:8px; padding:12px;}
@@ -133,7 +133,7 @@
   .stat-box .v{font-family:var(--mono); font-size:18px; font-weight:700; margin-top:4px;}
   .analysis-text{font-size:13px; line-height:1.6; color:var(--ink); background:var(--petrol-soft); border-left:3px solid var(--petrol); padding:12px 14px; border-radius:6px;}
   canvas{max-width:100%;}
- 
+
   .month-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);}
   .month-card .mc-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
   .month-card .mc-head .mes{font-weight:800; font-size:14px;}
@@ -141,7 +141,7 @@
   .mc-counts{display:flex; gap:10px; flex-wrap:wrap; font-size:12px;}
   .mc-counts span{display:inline-flex; align-items:center; gap:5px; background:var(--paper-2); padding:4px 8px; border-radius:20px;}
   .mc-counts i{width:8px; height:8px; border-radius:50%; display:inline-block;}
- 
+
   /* ---------- Lock screen ---------- */
   .lock-screen{position:fixed; inset:0; background:var(--ink); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;}
   .lock-card{background:var(--paper); border-radius:14px; padding:26px 22px; width:100%; max-width:340px; box-shadow:0 10px 40px rgba(0,0,0,0.4); margin:auto;}
@@ -159,7 +159,7 @@
   .lock-divider::before, .lock-divider::after{content:""; flex:1; height:1px; background:var(--line);}
   .btn-block{width:100%;}
   .lock-link{display:block; text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:14px; background:none; border:none; cursor:pointer; text-decoration:underline;}
- 
+
   /* ---------- Modals ---------- */
   .modal-overlay{position:fixed; inset:0; background:rgba(32,29,26,0.55); z-index:90; display:none; align-items:center; justify-content:center; padding:16px;}
   .modal-overlay.open{display:flex;}
@@ -170,12 +170,12 @@
   .turno-detail-item .tdi-row{display:flex; justify-content:space-between; padding:2px 0;}
   .turno-detail-item .tdi-actions{display:flex; gap:8px; margin-top:8px; font-family:var(--sans);}
   .turno-detail-item .tdi-actions button{flex:1; font-size:11px; padding:7px;}
- 
+
   .navbar{position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line); display:flex; z-index:20;}
   .navbar button{flex:1; background:none; border:none; padding:10px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink-soft); font-weight:700; font-size:10.5px;}
   .navbar button.active{color:var(--petrol);}
   .navbar button .ic{width:20px; height:20px;}
- 
+
   @media (min-width:900px){
     #app{display:grid; grid-template-columns:220px 1fr; max-width:1280px; padding-bottom:0;}
     .topbar{grid-column:1/3;}
@@ -189,14 +189,14 @@
 </style>
 </head>
 <body>
- 
+
 <div class="lock-screen" id="lock-screen">
   <div class="lock-card">
     <div class="lock-brand">
       <div class="brand-mark" style="width:28px;height:28px;"></div>
       <h1>Liquidación de Viajes</h1>
     </div>
- 
+
     <!-- Alta de usuario -->
     <div id="lock-setup" style="display:none;">
       <p class="lock-sub">Creá tu usuario para proteger tus datos</p>
@@ -209,7 +209,7 @@
       <button class="btn btn-block" id="btn-setup">Crear usuario y entrar</button>
       <button class="lock-link" id="btn-go-login">Ya tengo cuenta, quiero ingresar</button>
     </div>
- 
+
     <!-- Login -->
     <div id="lock-login" style="display:none;">
       <p class="lock-sub">Ingresá con tu cédula para ver tus liquidaciones</p>
@@ -224,14 +224,50 @@
     </div>
   </div>
 </div>
- 
+
+<!-- Pantalla intermedia: antes de empezar (cada vez que se abre la app) -->
+<div class="lock-screen" id="pre-turno-screen" style="display:none;">
+  <div class="lock-card">
+    <div class="lock-brand">
+      <div class="brand-mark" style="width:28px;height:28px;"></div>
+      <h1>Antes de empezar</h1>
+    </div>
+    <p class="lock-sub">Confirmá estos datos para hoy</p>
+    <div class="lock-field">
+      <label>Auto regular (con el que estás en caja)</label>
+      <input type="text" id="pre-coche-habitual" inputmode="numeric">
+    </div>
+    <div class="lock-field">
+      <label>Día de descanso</label>
+      <select id="pre-dia-descanso">
+        <option value="">Sin definir</option>
+        <option value="1">Lunes</option>
+        <option value="2">Martes</option>
+        <option value="3">Miércoles</option>
+        <option value="4">Jueves</option>
+        <option value="5">Viernes</option>
+        <option value="6">Sábado</option>
+        <option value="0">Domingo</option>
+      </select>
+    </div>
+    <div class="lock-field">
+      <label>Franja de tu turno de hoy</label>
+      <select id="pre-franja">
+        <option value="matutino-vespertino">Matutino-Vespertino</option>
+        <option value="vespertino-nocturno">Vespertino-Nocturno</option>
+      </select>
+    </div>
+    <button class="btn btn-block" id="btn-pre-continuar">Continuar</button>
+  </div>
+</div>
+
 <!-- Menú de opciones (tres puntitos) -->
 <div class="dropdown-menu" id="dropdown-menu">
   <button id="menu-config">⚙️ Configuración</button>
   <button id="menu-change-pass">🔑 Cambiar contraseña</button>
   <button id="menu-logout" class="danger">⎋ Cerrar sesión</button>
 </div>
- 
+
 <!-- Modal: configuración (día de descanso) -->
 <div class="modal-overlay" id="modal-config">
   <div class="modal-card">
@@ -254,7 +290,7 @@
     </div>
   </div>
 </div>
- 
+
 <!-- Modal: cambiar contraseña -->
 <div class="modal-overlay" id="modal-change-pass">
   <div class="modal-card">
@@ -269,7 +305,7 @@
     </div>
   </div>
 </div>
- 
+
 <!-- Modal: detalle del día (varios turnos) -->
 <div class="modal-overlay" id="modal-day-detail">
   <div class="modal-card">
@@ -281,7 +317,7 @@
     </div>
   </div>
 </div>
- 
+
 <div id="app" class="app-hidden">
   <div class="topbar">
     <div class="brand">
@@ -296,24 +332,24 @@
       <button class="menu-dots" id="btn-menu-dots" title="Opciones">⋮</button>
     </div>
   </div>
- 
+
   <nav class="navbar" id="navbar">
     <button data-view="turno" class="active"><span class="ic">🧾</span>Turno</button>
     <button data-view="historial"><span class="ic">📋</span>Historial</button>
     <button data-view="economia"><span class="ic">📈</span>Economía</button>
     <button data-view="resumen"><span class="ic">🗓️</span>Resumen</button>
   </nav>
- 
+
   <main>
     <!-- ================= VISTA TURNO ================= -->
     <section class="view active" id="view-turno">
       <h2 class="view-title">Liquidación del turno</h2>
- 
+
       <div class="card">
         <h3><span class="dot"></span>Datos del turno</h3>
         <div class="grid grid-3">
           <div class="field"><label>Fecha</label><input type="date" id="f-fecha"></div>
-          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" inputmode="numeric" value="2851"></div>
+          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" inputmode="numeric"></div>
           <div class="field"><label>Km entrada</label><input type="text" id="f-kmEntrada" inputmode="numeric"></div>
         </div>
         <div class="grid grid-3" style="margin-top:12px;">
@@ -325,10 +361,17 @@
           <div class="field"><label>Hora entrada (opcional)</label><input type="time" id="f-horaEntrada"></div>
           <div class="field"><label>Hora salida (opcional)</label><input type="time" id="f-horaSalida"></div>
         </div>
+        <div class="field" style="margin-top:12px;">
+          <label>Franja del turno</label>
+          <select id="f-franja">
+            <option value="matutino-vespertino">Matutino-Vespertino</option>
+            <option value="vespertino-nocturno">Vespertino-Nocturno</option>
+          </select>
+        </div>
         <label class="checkline"><input type="checkbox" id="f-complementada"> Factura complementada</label>
-        <p class="hint">Coche distinto al 2851: Aporte Leyes $0 y Otros = 4% del total. Coche 2851 + complementada: además el Salario se completa hasta $1040 si quedaba por debajo.</p>
+        <p class="hint">Coche distinto al habitual: Aporte Leyes $0 y Otros = 4% del total. Coche habitual + complementada: además el Salario se completa hasta $1040 si quedaba por debajo.</p>
       </div>
- 
+
       <div class="card">
         <h3><span class="dot"></span>Gastos del móvil (UYU)</h3>
         <div class="grid grid-3">
@@ -347,7 +390,7 @@
           <div class="field"><label>Líquido</label><input type="text" id="f-liquido" class="auto" readonly></div>
         </div>
       </div>
- 
+
       <div class="card">
         <h3><span class="dot"></span>Resultado del turno (UYU)</h3>
         <div class="grid grid-3">
@@ -366,13 +409,13 @@
         </div>
         <p class="hint" id="f-gananciaHora" style="display:none; margin-top:10px;"></p>
       </div>
- 
+
       <div class="actions-row">
         <button class="btn" id="btn-guardar">Guardar turno</button>
         <button class="btn secondary" id="btn-nuevo">Empezar turno nuevo</button>
       </div>
     </section>
- 
+
     <!-- ================= VISTA HISTORIAL ================= -->
     <section class="view" id="view-historial">
       <h2 class="view-title">Historial de turnos</h2>
@@ -384,7 +427,7 @@
       <div id="hist-mobile"></div>
       <div id="hist-desktop" class="card" style="display:none; overflow-x:auto;"></div>
     </section>
- 
+
     <!-- ================= VISTA ECONOMIA ================= -->
     <section class="view" id="view-economia">
       <h2 class="view-title">Control de Economía</h2>
@@ -429,7 +472,7 @@
         </div>
       </div>
     </section>
- 
+
     <!-- ================= VISTA RESUMEN MENSUAL ================= -->
     <section class="view" id="view-resumen">
       <h2 class="view-title">Resumen mes a mes</h2>
@@ -438,7 +481,7 @@
     </section>
   </main>
 </div>
- 
+
 <script>
 /* ============================================================
    UTILIDADES GENERALES
@@ -474,7 +517,7 @@ function validarCedulaUY(ciRaw){
   const verificador = resto === 0 ? 0 : 10 - resto;
   return verificador === digits[7];
 }
- 
+
 /* ============================================================
    ALMACENAMIENTO (namespaced por cédula del usuario activo)
    ============================================================ */
@@ -493,36 +536,37 @@ async function storageSet(key, value){
 async function storageRemove(key){
   try{ if (window.storage){ await window.storage.delete(key, false); } else { localStorage.removeItem(key); } }catch(e){}
 }
- 
+
 let currentUser = null; // { cedula, username }
 let historial = {};     // { 'YYYY-MM-DD': [ {id, ...campos} ] }
 let settings = { diaDescanso: '' };
 let chartMes = null;
 let currentMonthCursor = new Date();
+let sessionFranja = 'matutino-vespertino';
 let editingTurno = null; // { dateKey, id } cuando se edita un turno existente
- 
+
 function keyHistorial(){ return 'liquidaciones-historial:' + currentUser.cedula; }
 function keySettings(){ return 'ajustes:' + currentUser.cedula; }
 function keyDraft(){ return 'turno-borrador:' + currentUser.cedula; }
- 
+
 async function loadHistorial(){
   const raw = await storageGet(keyHistorial());
   try{ historial = raw ? JSON.parse(raw) : {}; }catch(e){ historial = {}; }
 }
 async function saveHistorial(){ return await storageSet(keyHistorial(), JSON.stringify(historial)); }
- 
+
 async function loadSettings(){
   const raw = await storageGet(keySettings());
   try{ settings = raw ? JSON.parse(raw) : { diaDescanso:'' }; }catch(e){ settings = { diaDescanso:'' }; }
 }
 async function saveSettings(){ return await storageSet(keySettings(), JSON.stringify(settings)); }
- 
+
 /* ============================================================
    AUTENTICACION (multiusuario por cédula)
    ============================================================ */
 const USERS_KEY = 'auth-users';
 const REMEMBER_KEY = 'auth-remembered-cedula';
- 
+
 async function sha256(text){
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -533,7 +577,7 @@ async function getUsers(){
   try{ return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } // { cedula: {username, passHash, bioCredId} }
 }
 async function saveUsers(users){ await storageSet(USERS_KEY, JSON.stringify(users)); }
- 
+
 async function biometricAvailable(){
   if (!isMobileDevice()) return false;
   try{ return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }
@@ -563,7 +607,7 @@ async function loginWithBiometric(credIdBase64){
     return !!assertion;
   }catch(e){ return false; }
 }
- 
+
 function showLock(view){
   document.getElementById('lock-screen').style.display = 'flex';
   document.getElementById('app').classList.add('app-hidden');
@@ -574,7 +618,7 @@ function hideLock(){
   document.getElementById('lock-screen').style.display = 'none';
   document.getElementById('app').classList.remove('app-hidden');
 }
- 
+
 async function refreshSetupBioVisibility(){
   document.getElementById('setup-bio-wrap').style.display = (await biometricAvailable()) ? 'flex' : 'none';
 }
@@ -590,7 +634,7 @@ async function showLoginScreen(prefillCedula){
   document.getElementById('btn-bio-login').style.display = bioOk ? 'block' : 'none';
   document.getElementById('btn-bio-login').dataset.credid = bioOk ? u.bioCredId : '';
 }
- 
+
 async function handleSetupSubmit(){
   const user = document.getElementById('setup-user').value.trim();
   const cedula = document.getElementById('setup-cedula').value.trim();
@@ -598,14 +642,14 @@ async function handleSetupSubmit(){
   const pass2 = document.getElementById('setup-pass2').value;
   const errEl = document.getElementById('setup-error');
   errEl.style.display = 'none';
- 
+
   if (!user || !cedula || !pass){ errEl.textContent = 'Completá usuario, cédula y contraseña.'; errEl.style.display='block'; return; }
   if (!validarCedulaUY(cedula)){ errEl.textContent = 'La cédula ingresada no es válida.'; errEl.style.display='block'; return; }
   if (pass !== pass2){ errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display='block'; return; }
- 
+
   const users = await getUsers();
   if (users[cedula]){ errEl.textContent = 'Ya existe un usuario con esa cédula. Andá a "Ya tengo cuenta".'; errEl.style.display='block'; return; }
- 
+
   const entry = { username: user, passHash: await sha256(pass), bioCredId: null };
   if (document.getElementById('setup-bio').checked && await biometricAvailable()){
     const credId = await registerBiometric(user);
@@ -616,9 +660,9 @@ async function handleSetupSubmit(){
   await storageSet(REMEMBER_KEY, cedula);
   currentUser = { cedula, username: user };
   hideLock();
-  appInit();
+  await showPreTurnoScreen();
 }
- 
+
 async function handleLoginSubmit(){
   const cedula = document.getElementById('login-cedula').value.trim();
   const pass = document.getElementById('login-pass').value;
@@ -628,14 +672,14 @@ async function handleLoginSubmit(){
   const u = users[cedula];
   const passHash = await sha256(pass);
   if (!u || passHash !== u.passHash){ errEl.textContent = 'Cédula o contraseña incorrectos.'; errEl.style.display = 'block'; return; }
- 
+
   if (document.getElementById('login-remember').checked){ await storageSet(REMEMBER_KEY, cedula); }
   else { await storageRemove(REMEMBER_KEY); }
   currentUser = { cedula, username: u.username };
   hideLock();
-  appInit();
+  await showPreTurnoScreen();
 }
- 
+
 async function handleBioLogin(){
   const credId = document.getElementById('btn-bio-login').dataset.credid;
   const cedula = document.getElementById('login-cedula').value.trim();
@@ -646,19 +690,19 @@ async function handleBioLogin(){
     const users = await getUsers();
     currentUser = { cedula, username: users[cedula].username };
     hideLock();
-    appInit();
+    await showPreTurnoScreen();
   } else {
     errEl.textContent = 'No se pudo validar la huella. Probá con la contraseña.'; errEl.style.display = 'block';
   }
 }
- 
+
 async function logout(){
   const ok = confirm('¿Cerrar sesión? Vas a tener que ingresar tu cédula y contraseña de nuevo.');
   if (!ok) return;
   await storageRemove(REMEMBER_KEY);
   location.reload();
 }
- 
+
 async function ensureAdminUser(){
   const users = await getUsers();
   if (!users['00000000']){
@@ -666,20 +710,40 @@ async function ensureAdminUser(){
     await saveUsers(users);
   }
 }
- 
+
+async function showPreTurnoScreen(){
+  await loadSettings();
+  document.getElementById('pre-coche-habitual').value = settings.cocheHabitual || '2851';
+  document.getElementById('pre-dia-descanso').value = settings.diaDescanso ?? '';
+  document.getElementById('pre-franja').value = sessionFranja;
+  document.getElementById('pre-turno-screen').style.display = 'flex';
+  document.getElementById('app').classList.add('app-hidden');
+}
+
+async function continueFromPreTurno(){
+  settings.cocheHabitual = document.getElementById('pre-coche-habitual').value.trim() || '2851';
+  settings.diaDescanso = document.getElementById('pre-dia-descanso').value;
+  sessionFranja = document.getElementById('pre-franja').value;
+  await saveSettings();
+  document.getElementById('pre-turno-screen').style.display = 'none';
+  document.getElementById('app').classList.remove('app-hidden');
+  appInit();
+}
+
 async function authGate(){
   onlyDigits(document.getElementById('setup-cedula'), 8);
   onlyDigits(document.getElementById('login-cedula'), 8);
   onlyDigits(document.getElementById('cp-cedula'), 8);
- 
+  onlyDigits(document.getElementById('pre-coche-habitual'));
+
   await ensureAdminUser();
- 
+
   const remembered = await storageGet(REMEMBER_KEY);
   const users = await getUsers();
   if (remembered && users[remembered]){
     currentUser = { cedula: remembered, username: users[remembered].username };
     hideLock();
-    appInit();
+    await showPreTurnoScreen();
     return;
   }
   if (Object.keys(users).length === 0){
@@ -689,7 +753,7 @@ async function authGate(){
     await showLoginScreen(remembered || '');
   }
 }
- 
+
 /* ============================================================
    CALCULO DE LA PLANILLA
    ============================================================ */
@@ -701,7 +765,7 @@ function calcHoras(hEntrada, hSalida){
   if (diff <= 0) diff += 24*60;
   return diff/60;
 }
- 
+
 function compute(input){
   const total = num(input.total);
   const viatico = num(input.viatico);
@@ -716,57 +780,58 @@ function compute(input){
   const kmSalida = num(input.kmSalida);
   const coche = (input.coche || '').trim();
   const complementada = !!input.complementada;
-  const esHabitual = (coche === '2851') && !complementada;
- 
+  const cocheHabitual = (settings && settings.cocheHabitual) ? settings.cocheHabitual : '2851';
+  const esHabitual = (coche === cocheHabitual) && !complementada;
+
   const salarioBase = total * 0.29;
   let salario = salarioBase;
   let aporteLeyes = 0;
   let otros;
- 
+
   if (esHabitual){
     aporteLeyes = salarioBase * 0.196;
     otros = num(input.otros);
   } else {
     aporteLeyes = 0;
     otros = total * 0.04;
-    if (coche === '2851' && complementada){
+    if (coche === cocheHabitual && complementada){
       salario = salarioBase < 1040 ? 1040 : salarioBase;
     }
   }
- 
+
   const gastos = salario + viatico + combustible + aceite + gomeria + lavado + otros;
   const liquido = total - gastos;
   const subTotal = liquido + aporteLeyes;
   const totalFinal = subTotal - h13 - tarjeta;
-  const totalReal = totalFinal + efectivo;
+  const totalReal = efectivo - totalFinal;
   const kmTotal = kmSalida - kmEntrada;
- 
+
   const horas = calcHoras(input.horaEntrada, input.horaSalida);
   const gananciaHora = (horas && horas > 0) ? totalReal / horas : null;
- 
+
   return { total, viatico, combustible, aceite, gomeria, lavado, h13, tarjeta, efectivo,
     kmEntrada, kmSalida, coche, complementada, esHabitual, horaEntrada: input.horaEntrada || '', horaSalida: input.horaSalida || '',
     salario, otros, gastos, liquido, aporteLeyes, subTotal, totalFinal, totalReal, kmTotal, horas, gananciaHora };
 }
- 
+
 function colorFor(totalReal){
   if (totalReal >= 1000) return {name:'verde', hex:'#2E7D46', bg:'#E4F2E8', label:'Meta cumplida'};
   if (totalReal >= 900)  return {name:'amarillo', hex:'#B8862B', bg:'#FBF0DA', label:'Levemente bajo'};
   if (totalReal >= 750)  return {name:'naranja', hex:'#C9642E', bg:'#FBE7DA', label:'Bajo la meta'};
   return {name:'rojo', hex:'#B33A3A', bg:'#F7E1E1', label:'Muy bajo'};
 }
- 
+
 function esDiaDescanso(dateObj){
   if (settings.diaDescanso === '' || settings.diaDescanso === undefined || settings.diaDescanso === null) return false;
   return dateObj.getDay() === Number(settings.diaDescanso);
 }
- 
+
 /* ============================================================
    MODELO: turnos por día (array)
    ============================================================ */
 function turnosDelDia(dateKey){ return historial[dateKey] || []; }
 function totalRealDelDia(dateKey){ return turnosDelDia(dateKey).reduce((a,t)=>a+t.totalReal,0); }
- 
+
 function guardarOActualizarTurno(dateKey, input){
   const c = compute(input);
   if (!historial[dateKey]) historial[dateKey] = [];
@@ -786,12 +851,12 @@ function guardarOActualizarTurno(dateKey, input){
     historial[dateKey].push({ ...input, ...c, id, savedAt: new Date().toISOString() });
   }
 }
- 
+
 /* ============================================================
    VISTA TURNO
    ============================================================ */
 const formNumericIds = ['kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo'];
- 
+
 function getFormInput(){
   const g = id => document.getElementById('f-'+id);
   return {
@@ -811,10 +876,11 @@ function getFormInput(){
     tarjeta: g('tarjeta').value,
     efectivo: g('efectivo').value,
     horaEntrada: g('horaEntrada').value,
-    horaSalida: g('horaSalida').value
+    horaSalida: g('horaSalida').value,
+    franja: g('franja').value
   };
 }
- 
+
 function refreshFormComputed(){
   const input = getFormInput();
   const c = compute(input);
@@ -826,13 +892,13 @@ function refreshFormComputed(){
   document.getElementById('f-subTotal').value = money(c.subTotal);
   document.getElementById('f-totalFinal').value = money(c.totalFinal);
   document.getElementById('f-totalReal').textContent = money(c.totalReal);
- 
+
   const gEl = document.getElementById('f-gananciaHora');
   if (c.gananciaHora !== null){
     gEl.style.display = 'block';
     gEl.textContent = `Duración del turno: ${c.horas.toFixed(1)} hs · Ganancia por hora: ${money(c.gananciaHora)}`;
   } else { gEl.style.display = 'none'; }
- 
+
   const otrosField = document.getElementById('f-otros');
   if (!c.esHabitual){
     otrosField.value = Math.round(c.otros);
@@ -845,31 +911,32 @@ function refreshFormComputed(){
   document.getElementById('coche-sub').textContent = 'COCHE Nº ' + (input.coche || '—') + ' · ' + (currentUser ? currentUser.username.toUpperCase() : '');
   saveDraft(input);
 }
- 
+
 async function saveDraft(input){
   if (!currentUser) return;
   if (editingTurno) return; // no pisar el borrador si se está editando un turno guardado
   await storageSet(keyDraft(), JSON.stringify(input));
 }
 async function clearDraft(){ if (currentUser) await storageRemove(keyDraft()); }
- 
+
 function fillForm(input){
   const g = id => document.getElementById('f-'+id);
   g('fecha').value = input.fecha || todayISO();
-  g('coche').value = input.coche ?? '2851';
+  g('coche').value = input.coche ?? (settings.cocheHabitual || '2851');
   g('complementada').checked = !!input.complementada;
+  g('franja').value = input.franja || sessionFranja;
   ['kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo','horaEntrada','horaSalida'].forEach(id=>{
     g(id).value = input[id] ?? '';
   });
   refreshFormComputed();
 }
- 
+
 function clearForm(dateKeyPrefill){
   editingTurno = null;
-  fillForm({ fecha: dateKeyPrefill || todayISO(), coche:'2851' });
+  fillForm({ fecha: dateKeyPrefill || todayISO(), coche: settings.cocheHabitual || '2851', franja: sessionFranja });
   clearDraft();
 }
- 
+
 function loadTurnoIntoForm(dateKey, id){
   const t = (historial[dateKey]||[]).find(x=>x.id===id);
   if (!t) return;
@@ -877,7 +944,7 @@ function loadTurnoIntoForm(dateKey, id){
   fillForm({ ...t, fecha: dateKey });
   switchView('turno');
 }
- 
+
 async function guardarTurno(){
   const input = getFormInput();
   guardarOActualizarTurno(input.fecha, input);
@@ -893,7 +960,7 @@ async function guardarTurno(){
     alert('No se pudo guardar el turno. Intentá de nuevo.');
   }
 }
- 
+
 /* ============================================================
    VISTA HISTORIAL (agrupado por día)
    ============================================================ */
@@ -901,20 +968,20 @@ function renderHistorial(){
   const dates = Object.keys(historial).filter(d=>historial[d].length>0).sort().reverse();
   const mobileEl = document.getElementById('hist-mobile');
   const desktopEl = document.getElementById('hist-desktop');
- 
+
   if (dates.length === 0){
     mobileEl.innerHTML = '<div class="empty">Todavía no guardaste ningún turno.<br>Completá la planilla y tocá "Guardar turno".</div>';
     desktopEl.innerHTML = mobileEl.innerHTML;
     return;
   }
- 
+
   mobileEl.innerHTML = dates.map(d => dayTicketHTML(d)).join('');
   desktopEl.innerHTML = dayTableHTML(dates);
- 
+
   mobileEl.querySelectorAll('[data-day]').forEach(el => el.addEventListener('click', ()=>openDayDetail(el.dataset.day)));
   desktopEl.querySelectorAll('[data-day]').forEach(el => el.addEventListener('click', ()=>openDayDetail(el.dataset.day)));
 }
- 
+
 function dayTicketHTML(dateKey){
   const turnos = turnosDelDia(dateKey);
   const total = totalRealDelDia(dateKey);
@@ -929,7 +996,7 @@ function dayTicketHTML(dateKey){
     <div class="hint">Tocá para ver el detalle de cada turno</div>
   </div>`;
 }
- 
+
 function dayTableHTML(dates){
   const rows = dates.map(d=>{
     const turnos = turnosDelDia(d);
@@ -944,7 +1011,11 @@ function dayTableHTML(dates){
   }).join('');
   return `<table class="hist-table"><thead><tr><th>Fecha</th><th>Turnos</th><th>Total real</th><th>Estado</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
- 
+
+function franjaLabel(f){
+  return f === 'vespertino-nocturno' ? 'Vespertino-Nocturno' : 'Matutino-Vespertino';
+}
+
 function openDayDetail(dateKey){
   const turnos = turnosDelDia(dateKey);
   document.getElementById('dd-title').textContent = 'Turnos del ' + dateKey;
@@ -955,6 +1026,7 @@ function openDayDetail(dateKey){
     list.innerHTML = turnos.map((t,i)=>`
       <div class="turno-detail-item">
         <div class="tdi-row"><span>Turno</span><span>#${i+1}${t.coche?' · Coche '+t.coche:''}</span></div>
+        <div class="tdi-row"><span>Franja</span><span>${franjaLabel(t.franja)}</span></div>
         <div class="tdi-row"><span>Total facturado</span><span>${money(t.total)}</span></div>
         <div class="tdi-row"><span>Gastos</span><span>${money(t.gastos)}</span></div>
         <div class="tdi-row"><span>TOTAL final</span><span>${money(t.totalFinal)}</span></div>
@@ -969,7 +1041,7 @@ function openDayDetail(dateKey){
   }
   document.getElementById('modal-day-detail').classList.add('open');
   document.getElementById('modal-day-detail').dataset.day = dateKey;
- 
+
   list.querySelectorAll('[data-edit-id]').forEach(b=>b.addEventListener('click', ()=>{
     closeModal('modal-day-detail');
     loadTurnoIntoForm(b.dataset.editDay, b.dataset.editId);
@@ -987,14 +1059,14 @@ function openDayDetail(dateKey){
   }));
 }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
- 
+
 function exportHistorialExcel(){
   const dates = Object.keys(historial).sort();
   const rows = [];
   dates.forEach(d=>{
     turnosDelDia(d).forEach(r=>{
       rows.push({
-        Fecha: d, 'Coche N°': r.coche, Complementada: r.complementada ? 'Sí' : 'No',
+        Fecha: d, 'Coche N°': r.coche, Complementada: r.complementada ? 'Sí' : 'No', Franja: franjaLabel(r.franja),
         'Hora entrada': r.horaEntrada || '', 'Hora salida': r.horaSalida || '',
         'Km entrada': r.kmEntrada, 'Km salida': r.kmSalida, 'Km total': r.kmTotal,
         'Total facturado': r.total, Salario: Math.round(r.salario), Viatico: r.viatico,
@@ -1013,7 +1085,7 @@ function exportHistorialExcel(){
   XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
   XLSX.writeFile(wb, 'liquidaciones_de_viajes.xlsx');
 }
- 
+
 function importHistorialExcel(file){
   const reader = new FileReader();
   reader.onload = async (e) => {
@@ -1024,13 +1096,14 @@ function importHistorialExcel(file){
       if (rows.length === 0){ alert('El archivo no tiene filas para restaurar.'); return; }
       const ok = confirm(`Se encontraron ${rows.length} turnos en el archivo. Se van a agregar a tu historial. ¿Continuar?`);
       if (!ok) return;
- 
+
       let importados = 0;
       rows.forEach(row=>{
         const fecha = row['Fecha'];
         if (!fecha) return;
         const input = {
           fecha, coche: String(row['Coche N°'] ?? '2851'), complementada: row['Complementada'] === 'Sí',
+          franja: (row['Franja'] === 'Vespertino-Nocturno') ? 'vespertino-nocturno' : 'matutino-vespertino',
           horaEntrada: row['Hora entrada'] || '', horaSalida: row['Hora salida'] || '',
           kmEntrada: row['Km entrada'] || 0, kmSalida: row['Km salida'] || 0, total: row['Total facturado'] || 0,
           viatico: row['Viatico'] || 0, combustible: row['Combustible'] || 0, aceite: row['Aceite'] || 0,
@@ -1050,26 +1123,26 @@ function importHistorialExcel(file){
   };
   reader.readAsArrayBuffer(file);
 }
- 
+
 /* ============================================================
    VISTA ECONOMIA
    ============================================================ */
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DOWS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
- 
+
 function isoOfDay(year, month, day){ return year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0'); }
- 
+
 function renderEconomia(){
   const year = currentMonthCursor.getFullYear();
   const month = currentMonthCursor.getMonth();
   document.getElementById('mes-label').textContent = MESES[month] + ' ' + year;
   document.getElementById('cal-dows').innerHTML = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
- 
+
   const firstDay = new Date(year, month, 1);
   const startOffset = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month+1, 0).getDate();
   const todayKey = todayISO();
- 
+
   let cells = '';
   for (let i=0;i<startOffset;i++) cells += '<div class="cal-cell empty-cell"></div>';
   const monthValues = []; // días con datos (para stats/gráfico), excluye descansos sin turno
@@ -1096,7 +1169,7 @@ function renderEconomia(){
     const key = el.dataset.day;
     if (turnosDelDia(key).length > 0) el.addEventListener('click', ()=>openDayDetail(key));
   });
- 
+
   const labels = monthValues.map(v=>v.day);
   const data = monthValues.map(v=>v.totalReal);
   const pointColors = monthValues.map(v=>v.color.hex);
@@ -1111,13 +1184,13 @@ function renderEconomia(){
     options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter'}, boxWidth:12 } } },
       scales:{ x:{ title:{display:true, text:'Día del mes'} }, y:{ beginAtZero:true, ticks:{ callback:v=>'$U'+v } } } }
   });
- 
+
   const vals = monthValues.map(v=>v.totalReal);
   const total = vals.reduce((a,b)=>a+b,0);
   const prom = vals.length ? total/vals.length : 0;
   document.getElementById('st-total').textContent = money(total);
   document.getElementById('st-prom').textContent = money(prom);
- 
+
   if (vals.length){
     const best = monthValues.reduce((a,b)=> b.totalReal>a.totalReal ? b : a);
     const worst = monthValues.reduce((a,b)=> b.totalReal<a.totalReal ? b : a);
@@ -1127,14 +1200,14 @@ function renderEconomia(){
     document.getElementById('st-mejor').textContent = '—';
     document.getElementById('st-peor').textContent = '—';
   }
- 
+
   const counts = {verde:0, amarillo:0, naranja:0, rojo:0};
   monthValues.forEach(v=> counts[v.color.name]++ );
   document.getElementById('st-verde').textContent = counts.verde;
   document.getElementById('st-amarillo').textContent = counts.amarillo;
   document.getElementById('st-naranja').textContent = counts.naranja;
   document.getElementById('st-rojo').textContent = counts.rojo;
- 
+
   const prevCursor = new Date(year, month-1, 1);
   const prevValues = [];
   const daysPrev = new Date(prevCursor.getFullYear(), prevCursor.getMonth()+1, 0).getDate();
@@ -1143,7 +1216,7 @@ function renderEconomia(){
     if (turnosDelDia(key).length>0) prevValues.push(totalRealDelDia(key));
   }
   const promPrev = prevValues.length ? prevValues.reduce((a,b)=>a+b,0)/prevValues.length : null;
- 
+
   const analysisEl = document.getElementById('analysis-text');
   if (vals.length === 0){
     analysisEl.textContent = 'Todavía no hay turnos guardados para ' + MESES[month] + '.';
@@ -1161,7 +1234,7 @@ function renderEconomia(){
     analysisEl.textContent = `${MESES[month]} viene siendo ${calidad}. El promedio diario es ${money(prom)}, con ${counts.verde} de ${vals.length} días alcanzando la meta.${comparacion}`;
   }
 }
- 
+
 function exportEconomiaExcel(){
   const dates = Object.keys(historial).filter(d=>turnosDelDia(d).length>0).sort();
   if (dates.length === 0){ alert('No hay datos guardados todavía.'); return; }
@@ -1186,12 +1259,12 @@ function exportEconomiaExcel(){
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(monthly), 'Cortes mensuales');
   XLSX.writeFile(wb, 'control_de_economia.xlsx');
 }
- 
+
 /* ============================================================
    VISTA RESUMEN MENSUAL
    ============================================================ */
 function monthLabel(key){ const [y,m] = key.split('-').map(Number); return MESES[m-1] + ' ' + y; }
- 
+
 function buildMonthlySummary(){
   const byMonth = {};
   Object.keys(historial).forEach(dateKey=>{
@@ -1204,7 +1277,7 @@ function buildMonthlySummary(){
   });
   return Object.keys(byMonth).sort().reverse().map(k=>({ key:k, ...byMonth[k] }));
 }
- 
+
 function renderResumenMensual(){
   const meses = buildMonthlySummary();
   const mobileEl = document.getElementById('resumen-mobile');
@@ -1233,7 +1306,7 @@ function renderResumenMensual(){
       <td><span class="status-dot" style="background:var(--rojo)"></span> ${m.rojo}</td>
       <td>${m.dias}</td></tr>`).join('')}</tbody></table>`;
 }
- 
+
 /* ============================================================
    MENU DE OPCIONES / CONFIGURACION / CAMBIO DE CONTRASEÑA
    ============================================================ */
@@ -1243,7 +1316,7 @@ document.addEventListener('click', (e)=>{
   const btn = document.getElementById('btn-menu-dots');
   if (menu && btn && !menu.contains(e.target) && e.target !== btn){ menu.style.display = 'none'; }
 });
- 
+
 function openConfigModal(){
   document.getElementById('config-dia-descanso').value = settings.diaDescanso ?? '';
   document.getElementById('modal-config').classList.add('open');
@@ -1254,7 +1327,7 @@ async function saveConfig(){
   closeModal('modal-config');
   renderEconomia();
 }
- 
+
 function openChangePassModal(){
   document.getElementById('cp-cedula').value = '';
   document.getElementById('cp-pass1').value = '';
@@ -1275,7 +1348,7 @@ async function saveChangePass(){
   closeModal('modal-change-pass');
   alert('Contraseña actualizada.');
 }
- 
+
 /* ============================================================
    PWA
    ============================================================ */
@@ -1296,7 +1369,7 @@ function setupPWA(){
     }catch(e){}
   }
 }
- 
+
 /* ============================================================
    NAVEGACION
    ============================================================ */
@@ -1308,7 +1381,7 @@ function switchView(name){
   if (name === 'historial') renderHistorial();
   if (name === 'resumen') renderResumenMensual();
 }
- 
+
 /* ============================================================
    INIT
    ============================================================ */
@@ -1317,15 +1390,15 @@ async function appInit(){
   document.getElementById('today-pill').textContent = new Date().toLocaleDateString('es-UY');
   await loadHistorial();
   await loadSettings();
- 
+
   formNumericIds.forEach(id=> onlyDigits(document.getElementById('f-'+id)) );
   onlyDigits(document.getElementById('f-coche'));
- 
+
   const draftRaw = await storageGet(keyDraft());
   let draft = null;
   try{ draft = draftRaw ? JSON.parse(draftRaw) : null; }catch(e){ draft = null; }
   if (draft){ fillForm(draft); } else { clearForm(); }
- 
+
   formNumericIds.concat(['fecha']).forEach(id=>{
     const el = document.getElementById('f-'+id);
     if (el) el.addEventListener('input', refreshFormComputed);
@@ -1334,7 +1407,7 @@ async function appInit(){
   document.getElementById('f-coche').addEventListener('input', refreshFormComputed);
   document.getElementById('f-horaEntrada').addEventListener('input', refreshFormComputed);
   document.getElementById('f-horaSalida').addEventListener('input', refreshFormComputed);
- 
+
   document.getElementById('btn-guardar').addEventListener('click', guardarTurno);
   document.getElementById('btn-nuevo').addEventListener('click', ()=>{
     if (confirm('¿Vaciar el formulario para empezar un turno nuevo?')) clearForm();
@@ -1346,12 +1419,12 @@ async function appInit(){
     if (e.target.files[0]) importHistorialExcel(e.target.files[0]);
     e.target.value = '';
   });
- 
+
   document.getElementById('mes-prev').addEventListener('click', ()=>{ currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()-1, 1); renderEconomia(); });
   document.getElementById('mes-next').addEventListener('click', ()=>{ currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()+1, 1); renderEconomia(); });
- 
+
   document.querySelectorAll('#navbar button').forEach(b=> b.addEventListener('click', ()=>switchView(b.dataset.view)) );
- 
+
   document.getElementById('btn-menu-dots').addEventListener('click', (e)=>{ e.stopPropagation(); toggleDropdown(); });
   document.getElementById('menu-config').addEventListener('click', ()=>{ toggleDropdown(); openConfigModal(); });
   document.getElementById('menu-change-pass').addEventListener('click', ()=>{ toggleDropdown(); openChangePassModal(); });
@@ -1367,11 +1440,11 @@ async function appInit(){
     clearForm(day);
     switchView('turno');
   });
- 
+
   refreshFormComputed();
   renderHistorial();
 }
- 
+
 document.querySelectorAll('.pass-toggle').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const input = document.getElementById(btn.dataset.toggle);
@@ -1380,17 +1453,17 @@ document.querySelectorAll('.pass-toggle').forEach(btn=>{
     btn.textContent = showing ? 'Mostrar' : 'Ocultar';
   });
 });
- 
+
 function init(){
   document.getElementById('btn-setup').addEventListener('click', handleSetupSubmit);
   document.getElementById('btn-login').addEventListener('click', handleLoginSubmit);
   document.getElementById('btn-bio-login').addEventListener('click', handleBioLogin);
   document.getElementById('btn-go-login').addEventListener('click', ()=>showLoginScreen(''));
   document.getElementById('btn-go-setup').addEventListener('click', async ()=>{ showLock('setup'); await refreshSetupBioVisibility(); });
+  document.getElementById('btn-pre-continuar').addEventListener('click', continueFromPreTurno);
   authGate();
 }
 init();
 </script>
 </body>
 </html>
- 
