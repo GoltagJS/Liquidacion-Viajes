@@ -17,19 +17,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
-    --paper:#F7F4EC;
-    --paper-2:#EFEADB;
-    --ink:#201D1A;
-    --ink-soft:#726C5F;
-    --line:#D9D2C0;
-    --petrol:#0F5C5C;
-    --petrol-dark:#0B3D3D;
-    --petrol-soft:#E3EFEE;
+    --paper:#F7F4EC; --paper-2:#EFEADB;
+    --ink:#201D1A; --ink-soft:#726C5F; --line:#D9D2C0;
+    --petrol:#0F5C5C; --petrol-dark:#0B3D3D; --petrol-soft:#E3EFEE;
     --verde:#2E7D46; --verde-bg:#E4F2E8;
     --amarillo:#B8862B; --amarillo-bg:#FBF0DA;
     --naranja:#C9642E; --naranja-bg:#FBE7DA;
     --rojo:#B33A3A; --rojo-bg:#F7E1E1;
     --gris:#9C9587; --gris-bg:#ECE8DE;
+    --descanso:#5B7C99; --descanso-bg:#E2EAF0;
     --mono:'Space Mono', ui-monospace, 'SF Mono', 'Courier New', monospace;
     --sans:'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
     --radius:10px;
@@ -37,102 +33,70 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{
-    font-family:var(--sans);
-    background:var(--paper);
-    color:var(--ink);
-    -webkit-font-smoothing:antialiased;
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none!important; transition:none!important;}
-  }
+  body{font-family:var(--sans); background:var(--paper); color:var(--ink); -webkit-font-smoothing:antialiased;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important;} }
   button, input, select{font-family:inherit; font-size:inherit;}
   :focus-visible{outline:2px solid var(--petrol); outline-offset:2px;}
-
-  /* ---------- App shell ---------- */
+ 
   #app{max-width:1180px; margin:0 auto; padding-bottom:84px;}
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 18px 14px;
-    border-bottom:1px solid var(--line);
-  }
+  .app-hidden{display:none!important;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 18px 14px; border-bottom:1px solid var(--line); position:relative;}
   .brand{display:flex; align-items:center; gap:10px;}
-  .brand-mark{
-    width:34px; height:34px; border-radius:8px;
-    background:repeating-linear-gradient(45deg, var(--ink) 0 6px, var(--petrol) 6px 12px);
-    flex:0 0 auto;
-  }
+  .brand-mark{width:34px; height:34px; border-radius:8px; background:repeating-linear-gradient(45deg, var(--ink) 0 6px, var(--petrol) 6px 12px); flex:0 0 auto;}
   .brand-text h1{font-size:15px; margin:0; letter-spacing:0.02em; font-weight:800;}
   .brand-text p{margin:0; font-size:11px; color:var(--ink-soft); font-family:var(--mono);}
-  .coche-pill{
-    font-family:var(--mono); font-size:12px; background:var(--ink); color:var(--paper);
-    padding:6px 10px; border-radius:20px; white-space:nowrap;
+  .topbar-right{display:flex; align-items:center; gap:6px;}
+  .coche-pill{font-family:var(--mono); font-size:12px; background:var(--ink); color:var(--paper); padding:6px 10px; border-radius:20px; white-space:nowrap;}
+  .menu-dots{background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft); padding:4px 8px; line-height:1;}
+  .dropdown-menu{
+    position:absolute; top:56px; right:14px; background:#fff; border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.14); min-width:190px; z-index:40; overflow:hidden; display:none;
   }
-
+  .dropdown-menu button{
+    display:block; width:100%; text-align:left; background:none; border:none; padding:11px 14px; font-size:13px;
+    cursor:pointer; color:var(--ink);
+  }
+  .dropdown-menu button:hover{background:var(--paper-2);}
+  .dropdown-menu button.danger{color:var(--rojo);}
+ 
   main{padding:16px;}
   .view{display:none;}
   .view.active{display:block;}
-
   h2.view-title{font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin:4px 0 14px; font-weight:700;}
-
-  .card{
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-    padding:16px; margin-bottom:14px; box-shadow:var(--shadow);
-  }
+ 
+  .card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; box-shadow:var(--shadow);}
   .card h3{margin:0 0 12px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px;}
   .card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--petrol);}
-
+ 
   .grid{display:grid; gap:12px;}
   .grid-2{grid-template-columns:1fr 1fr;}
   .grid-3{grid-template-columns:1fr 1fr 1fr;}
-  @media (max-width:640px){
-    .grid-2, .grid-3{grid-template-columns:1fr 1fr;}
-  }
-
+  @media (max-width:640px){ .grid-2, .grid-3{grid-template-columns:1fr 1fr;} }
+ 
   label{display:block; font-size:11px; color:var(--ink-soft); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;}
-  .field{margin-bottom:0;}
-  input[type=text], input[type=number], input[type=date]{
-    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:7px;
-    background:#fff; color:var(--ink); font-family:var(--mono); font-size:14px;
+  input[type=text], input[type=number], input[type=date], input[type=time], input[type=password], select{
+    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--ink); font-family:var(--mono); font-size:14px;
   }
-  input.auto{
-    background:var(--petrol-soft); border-color:#c9e0de; color:var(--petrol-dark); font-weight:700;
-  }
+  input.auto{background:var(--petrol-soft); border-color:#c9e0de; color:var(--petrol-dark); font-weight:700;}
   .checkline{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink); margin-top:8px;}
   .checkline input{width:16px; height:16px;}
-
   .hint{font-size:11px; color:var(--ink-soft); margin-top:6px; line-height:1.4;}
-
-  .result-big{
-    display:flex; align-items:baseline; justify-content:space-between;
-    background:var(--ink); color:var(--paper); border-radius:var(--radius);
-    padding:16px 18px; margin-top:2px;
-  }
+ 
+  .result-big{display:flex; align-items:baseline; justify-content:space-between; background:var(--ink); color:var(--paper); border-radius:var(--radius); padding:16px 18px; margin-top:2px;}
   .result-big .label{font-size:12px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.75;}
   .result-big .value{font-family:var(--mono); font-size:26px; font-weight:700;}
-
-  .btn{
-    display:inline-flex; align-items:center; gap:8px; justify-content:center;
-    background:var(--petrol); color:#fff; border:none; border-radius:8px;
-    padding:11px 16px; font-weight:700; font-size:13px; cursor:pointer;
-  }
+ 
+  .btn{display:inline-flex; align-items:center; gap:8px; justify-content:center; background:var(--petrol); color:#fff; border:none; border-radius:8px; padding:11px 16px; font-weight:700; font-size:13px; cursor:pointer;}
   .btn:hover{background:var(--petrol-dark);}
   .btn.secondary{background:#fff; color:var(--ink); border:1px solid var(--line);}
   .btn.secondary:hover{background:var(--paper-2);}
   .btn.ghost{background:transparent; color:var(--ink-soft); border:1px dashed var(--line); font-weight:600;}
   .btn.danger{background:#fff; color:var(--rojo); border:1px solid var(--rojo);}
+  .btn:disabled{opacity:0.5; cursor:not-allowed;}
   .actions-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
-
-  /* ---------- Ticket styling (historial cards, mobile) ---------- */
-  .ticket{
-    background:#fff; border:1px dashed var(--line); border-radius:2px;
-    font-family:var(--mono); padding:14px 16px; margin-bottom:12px; position:relative;
-  }
-  .ticket::before, .ticket::after{
-    content:""; position:absolute; left:0; right:0; height:8px;
-    background-image: radial-gradient(circle at 6px 4px, var(--paper) 4px, transparent 4.5px);
-    background-size: 14px 8px; background-repeat:repeat-x;
-  }
+ 
+  .ticket{background:#fff; border:1px dashed var(--line); border-radius:2px; font-family:var(--mono); padding:14px 16px; margin-bottom:12px; position:relative; cursor:pointer;}
+  .ticket::before, .ticket::after{content:""; position:absolute; left:0; right:0; height:8px; background-image: radial-gradient(circle at 6px 4px, var(--paper) 4px, transparent 4.5px); background-size: 14px 8px; background-repeat:repeat-x;}
   .ticket::before{top:-4px;}
   .ticket::after{bottom:-4px; transform:rotate(180deg);}
   .ticket-row{display:flex; justify-content:space-between; font-size:12.5px; padding:2px 0;}
@@ -140,68 +104,54 @@
   .ticket-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
   .ticket-head .fecha{font-weight:700; font-size:13px;}
   .status-chip{font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:0.04em;}
-  .ticket-actions{display:flex; gap:8px; margin-top:10px;}
-  .ticket-actions button{flex:1; font-size:11px; padding:7px;}
-
+ 
   table.hist-table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12.5px;}
-  table.hist-table th{
-    text-align:left; font-family:var(--sans); text-transform:uppercase; letter-spacing:0.04em;
-    font-size:10.5px; color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--ink);
-  }
+  table.hist-table th{text-align:left; font-family:var(--sans); text-transform:uppercase; letter-spacing:0.04em; font-size:10.5px; color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--ink);}
   table.hist-table td{padding:9px 10px; border-bottom:1px solid var(--line);}
-  table.hist-table tr:hover td{background:var(--paper-2);}
+  table.hist-table tr:hover td{background:var(--paper-2); cursor:pointer;}
   .status-dot{width:10px;height:10px;border-radius:50%; display:inline-block;}
-  .tbl-actions button{
-    background:none; border:none; cursor:pointer; color:var(--petrol); font-family:var(--sans); font-size:11.5px; font-weight:700; margin-right:8px;
-  }
-  .tbl-actions button.del{color:var(--rojo);}
-
-  .empty{
-    text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:13px;
-  }
-
-  /* ---------- Economia ---------- */
+  .empty{text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:13px;}
+ 
   .month-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
   .month-nav .month-label{font-weight:800; font-size:15px;}
   .month-nav button{background:#fff; border:1px solid var(--line); border-radius:7px; width:32px; height:32px; cursor:pointer; font-size:14px;}
-
   .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
   .cal-dow{font-size:10px; text-align:center; color:var(--ink-soft); font-weight:700; text-transform:uppercase;}
-  .cal-cell{
-    aspect-ratio:1/1; border-radius:7px; display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:12px; font-weight:700; color:var(--ink); cursor:default;
-    background:var(--gris-bg); border:1px solid transparent;
-  }
+  .cal-cell{aspect-ratio:1/1; border-radius:7px; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; color:var(--ink); cursor:default; background:var(--gris-bg); border:1px solid transparent; position:relative;}
   .cal-cell.empty-cell{background:transparent;}
-  .cal-cell.has-data{cursor:pointer;}
+  .cal-cell.has-data, .cal-cell.is-descanso{cursor:pointer;}
   .cal-cell.today{border-color:var(--ink);}
+  .cal-cell .multi-mark{position:absolute; bottom:2px; right:3px; font-size:7px;}
   .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:var(--ink-soft);}
   .legend span{display:inline-flex; align-items:center; gap:5px;}
   .legend i{width:9px; height:9px; border-radius:50%; display:inline-block;}
-
+ 
   .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
   @media (max-width:760px){.stat-grid{grid-template-columns:1fr 1fr;}}
   .stat-box{background:var(--paper-2); border-radius:8px; padding:12px;}
   .stat-box .k{font-size:10.5px; text-transform:uppercase; color:var(--ink-soft); font-weight:700; letter-spacing:0.03em;}
   .stat-box .v{font-family:var(--mono); font-size:18px; font-weight:700; margin-top:4px;}
-
   .analysis-text{font-size:13px; line-height:1.6; color:var(--ink); background:var(--petrol-soft); border-left:3px solid var(--petrol); padding:12px 14px; border-radius:6px;}
-
   canvas{max-width:100%;}
-
-  /* ---------- Lock screen (login / setup) ---------- */
-  .lock-screen{
-    position:fixed; inset:0; background:var(--ink); z-index:100;
-    display:flex; align-items:center; justify-content:center; padding:20px;
-  }
-  .lock-card{
-    background:var(--paper); border-radius:14px; padding:26px 22px; width:100%; max-width:340px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.4);
-  }
+ 
+  .month-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);}
+  .month-card .mc-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .month-card .mc-head .mes{font-weight:800; font-size:14px;}
+  .month-card .mc-head .total{font-family:var(--mono); font-weight:700; font-size:15px; color:var(--petrol-dark);}
+  .mc-counts{display:flex; gap:10px; flex-wrap:wrap; font-size:12px;}
+  .mc-counts span{display:inline-flex; align-items:center; gap:5px; background:var(--paper-2); padding:4px 8px; border-radius:20px;}
+  .mc-counts i{width:8px; height:8px; border-radius:50%; display:inline-block;}
+ 
+  /* ---------- Lock screen ---------- */
+  .lock-screen{position:fixed; inset:0; background:var(--ink); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;}
+  .lock-card{background:var(--paper); border-radius:14px; padding:26px 22px; width:100%; max-width:340px; box-shadow:0 10px 40px rgba(0,0,0,0.4); margin:auto;}
   .lock-brand{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:18px;}
   .lock-brand h1{font-size:15px; margin:0; font-weight:800;}
   .lock-sub{text-align:center; font-size:11.5px; color:var(--ink-soft); margin:-10px 0 18px; font-family:var(--mono);}
   .lock-field{margin-bottom:12px;}
+  .pass-field{position:relative;}
+  .pass-field input{padding-right:64px;}
+  .pass-toggle{position:absolute; right:6px; top:6px; bottom:6px; background:var(--paper-2); border:none; border-radius:5px; font-size:10.5px; font-weight:700; color:var(--petrol-dark); padding:0 8px; cursor:pointer;}
   .lock-check{display:flex; align-items:center; gap:8px; font-size:12.5px; margin:10px 0 16px;}
   .lock-check input{width:15px;height:15px;}
   .lock-error{color:var(--rojo); font-size:12px; margin-bottom:10px; display:none;}
@@ -209,81 +159,130 @@
   .lock-divider::before, .lock-divider::after{content:""; flex:1; height:1px; background:var(--line);}
   .btn-block{width:100%;}
   .lock-link{display:block; text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:14px; background:none; border:none; cursor:pointer; text-decoration:underline;}
-  .logout-btn{background:none; border:none; cursor:pointer; font-size:15px; color:var(--paper); opacity:0.8; padding:4px 6px;}
-
-  /* ---------- Nav: bottom bar mobile / sidebar desktop ---------- */
-  .navbar{
-    position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line);
-    display:flex; z-index:20;
-  }
-  .navbar button{
-    flex:1; background:none; border:none; padding:10px 4px 8px; cursor:pointer;
-    display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink-soft); font-weight:700; font-size:10.5px;
-  }
+ 
+  /* ---------- Modals ---------- */
+  .modal-overlay{position:fixed; inset:0; background:rgba(32,29,26,0.55); z-index:90; display:none; align-items:center; justify-content:center; padding:16px;}
+  .modal-overlay.open{display:flex;}
+  .modal-card{background:var(--paper); border-radius:12px; padding:20px; width:100%; max-width:420px; max-height:88vh; overflow-y:auto;}
+  .modal-card h3{margin:0 0 14px; font-size:15px; font-weight:800;}
+  .modal-close-row{display:flex; justify-content:flex-end; margin-top:16px; gap:10px;}
+  .turno-detail-item{border:1px solid var(--line); border-radius:8px; padding:12px; margin-bottom:10px; font-family:var(--mono); font-size:12.5px;}
+  .turno-detail-item .tdi-row{display:flex; justify-content:space-between; padding:2px 0;}
+  .turno-detail-item .tdi-actions{display:flex; gap:8px; margin-top:8px; font-family:var(--sans);}
+  .turno-detail-item .tdi-actions button{flex:1; font-size:11px; padding:7px;}
+ 
+  .navbar{position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--line); display:flex; z-index:20;}
+  .navbar button{flex:1; background:none; border:none; padding:10px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink-soft); font-weight:700; font-size:10.5px;}
   .navbar button.active{color:var(--petrol);}
   .navbar button .ic{width:20px; height:20px;}
-
+ 
   @media (min-width:900px){
     #app{display:grid; grid-template-columns:220px 1fr; max-width:1280px; padding-bottom:0;}
     .topbar{grid-column:1/3;}
-    .navbar{
-      position:static; flex-direction:column; border-top:none; border-right:1px solid var(--line);
-      padding:18px 10px; height:calc(100vh - 70px);
-    }
+    .navbar{position:static; flex-direction:column; border-top:none; border-right:1px solid var(--line); padding:18px 10px; height:calc(100vh - 70px);}
     .navbar button{flex-direction:row; justify-content:flex-start; gap:10px; padding:10px 12px; border-radius:8px; font-size:13px; text-transform:none;}
     .navbar button.active{background:var(--petrol-soft);}
     main{padding:24px 28px;}
     #hist-mobile, #resumen-mobile{display:none;}
     #hist-desktop, #resumen-desktop{display:block!important;}
   }
-
-  .month-card{
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-    padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);
-  }
-  .month-card .mc-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
-  .month-card .mc-head .mes{font-weight:800; font-size:14px;}
-  .month-card .mc-head .total{font-family:var(--mono); font-weight:700; font-size:15px; color:var(--petrol-dark);}
-  .mc-counts{display:flex; gap:10px; flex-wrap:wrap; font-size:12px;}
-  .mc-counts span{display:inline-flex; align-items:center; gap:5px; background:var(--paper-2); padding:4px 8px; border-radius:20px;}
-  .mc-counts i{width:8px; height:8px; border-radius:50%; display:inline-block;}
 </style>
 </head>
 <body>
-
+ 
 <div class="lock-screen" id="lock-screen">
   <div class="lock-card">
     <div class="lock-brand">
       <div class="brand-mark" style="width:28px;height:28px;"></div>
       <h1>Liquidación de Viajes</h1>
     </div>
-
-    <!-- Primer uso: crear usuario -->
+ 
+    <!-- Alta de usuario -->
     <div id="lock-setup" style="display:none;">
       <p class="lock-sub">Creá tu usuario para proteger tus datos</p>
       <p class="lock-error" id="setup-error"></p>
       <div class="lock-field"><label>Usuario</label><input type="text" id="setup-user"></div>
-      <div class="lock-field"><label>Contraseña</label><input type="password" id="setup-pass"></div>
-      <div class="lock-field"><label>Repetir contraseña</label><input type="password" id="setup-pass2"></div>
-      <label class="lock-check"><input type="checkbox" id="setup-bio"> Activar desbloqueo con huella dactilar en este teléfono</label>
+      <div class="lock-field"><label>Cédula</label><input type="text" id="setup-cedula" inputmode="numeric" maxlength="9" placeholder="Solo números"></div>
+      <div class="lock-field pass-field"><label>Contraseña</label><input type="password" id="setup-pass"><button type="button" class="pass-toggle" data-toggle="setup-pass">Mostrar</button></div>
+      <div class="lock-field pass-field"><label>Repetir contraseña</label><input type="password" id="setup-pass2"><button type="button" class="pass-toggle" data-toggle="setup-pass2">Mostrar</button></div>
+      <label class="lock-check" id="setup-bio-wrap" style="display:none;"><input type="checkbox" id="setup-bio"> Activar desbloqueo con huella dactilar en este teléfono</label>
       <button class="btn btn-block" id="btn-setup">Crear usuario y entrar</button>
+      <button class="lock-link" id="btn-go-login">Ya tengo cuenta, quiero ingresar</button>
     </div>
-
-    <!-- Ya existe usuario: login -->
+ 
+    <!-- Login -->
     <div id="lock-login" style="display:none;">
-      <p class="lock-sub">Ingresá para ver tus liquidaciones</p>
+      <p class="lock-sub">Ingresá con tu cédula para ver tus liquidaciones</p>
       <p class="lock-error" id="login-error"></p>
-      <div class="lock-field"><label>Usuario</label><input type="text" id="login-user"></div>
-      <div class="lock-field"><label>Contraseña</label><input type="password" id="login-pass"></div>
+      <div class="lock-field"><label>Cédula</label><input type="text" id="login-cedula" inputmode="numeric" maxlength="9" placeholder="Solo números"></div>
+      <div class="lock-field pass-field"><label>Contraseña</label><input type="password" id="login-pass"><button type="button" class="pass-toggle" data-toggle="login-pass">Mostrar</button></div>
       <label class="lock-check"><input type="checkbox" id="login-remember"> Recordarme en este dispositivo</label>
       <button class="btn btn-block" id="btn-login">Ingresar</button>
       <div class="lock-divider" id="bio-divider" style="display:none;">o</div>
       <button class="btn secondary btn-block" id="btn-bio-login" style="display:none;">🔒 Usar huella dactilar</button>
+      <button class="lock-link" id="btn-go-setup">Crear un usuario nuevo</button>
     </div>
   </div>
 </div>
-
-<div id="app">
+ 
+<!-- Menú de opciones (tres puntitos) -->
+<div class="dropdown-menu" id="dropdown-menu">
+  <button id="menu-config">⚙️ Configuración</button>
+  <button id="menu-change-pass">🔑 Cambiar contraseña</button>
+  <button id="menu-logout" class="danger">⎋ Cerrar sesión</button>
+</div>
+ 
+<!-- Modal: configuración (día de descanso) -->
+<div class="modal-overlay" id="modal-config">
+  <div class="modal-card">
+    <h3>Configuración</h3>
+    <label>Día de descanso</label>
+    <select id="config-dia-descanso">
+      <option value="">Sin definir</option>
+      <option value="1">Lunes</option>
+      <option value="2">Martes</option>
+      <option value="3">Miércoles</option>
+      <option value="4">Jueves</option>
+      <option value="5">Viernes</option>
+      <option value="6">Sábado</option>
+      <option value="0">Domingo</option>
+    </select>
+    <p class="hint">Ese día de la semana se va a marcar distinto en el calendario de Economía, y no va a contar como "día malo" si no cargás ningún turno.</p>
+    <div class="modal-close-row">
+      <button class="btn secondary" id="btn-config-cancel">Cancelar</button>
+      <button class="btn" id="btn-config-save">Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: cambiar contraseña -->
+<div class="modal-overlay" id="modal-change-pass">
+  <div class="modal-card">
+    <h3>Cambiar contraseña</h3>
+    <p class="lock-error" id="cp-error"></p>
+    <div class="lock-field"><label>Confirmá tu cédula</label><input type="text" id="cp-cedula" inputmode="numeric" maxlength="9" placeholder="Solo números"></div>
+    <div class="lock-field pass-field"><label>Nueva contraseña</label><input type="password" id="cp-pass1"><button type="button" class="pass-toggle" data-toggle="cp-pass1">Mostrar</button></div>
+    <div class="lock-field pass-field"><label>Repetir nueva contraseña</label><input type="password" id="cp-pass2"><button type="button" class="pass-toggle" data-toggle="cp-pass2">Mostrar</button></div>
+    <div class="modal-close-row">
+      <button class="btn secondary" id="btn-cp-cancel">Cancelar</button>
+      <button class="btn" id="btn-cp-save">Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal: detalle del día (varios turnos) -->
+<div class="modal-overlay" id="modal-day-detail">
+  <div class="modal-card">
+    <h3 id="dd-title">Turnos del día</h3>
+    <div id="dd-list"></div>
+    <div class="modal-close-row">
+      <button class="btn secondary" id="btn-dd-add">+ Agregar turno este día</button>
+      <button class="btn" id="btn-dd-close">Cerrar</button>
+    </div>
+  </div>
+</div>
+ 
+<div id="app" class="app-hidden">
   <div class="topbar">
     <div class="brand">
       <div class="brand-mark"></div>
@@ -292,81 +291,88 @@
         <p id="coche-sub">COCHE Nº 2851 · REGISTRO PRIVADO</p>
       </div>
     </div>
-    <div class="coche-pill" id="today-pill">--/--/----</div>
-    <button class="logout-btn" id="btn-logout" title="Cerrar sesión">⎋</button>
+    <div class="topbar-right">
+      <div class="coche-pill" id="today-pill">--/--/----</div>
+      <button class="menu-dots" id="btn-menu-dots" title="Opciones">⋮</button>
+    </div>
   </div>
-
+ 
   <nav class="navbar" id="navbar">
     <button data-view="turno" class="active"><span class="ic">🧾</span>Turno</button>
     <button data-view="historial"><span class="ic">📋</span>Historial</button>
     <button data-view="economia"><span class="ic">📈</span>Economía</button>
     <button data-view="resumen"><span class="ic">🗓️</span>Resumen</button>
   </nav>
-
+ 
   <main>
     <!-- ================= VISTA TURNO ================= -->
     <section class="view active" id="view-turno">
       <h2 class="view-title">Liquidación del turno</h2>
-
+ 
       <div class="card">
         <h3><span class="dot"></span>Datos del turno</h3>
         <div class="grid grid-3">
           <div class="field"><label>Fecha</label><input type="date" id="f-fecha"></div>
-          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" value="2851"></div>
-          <div class="field"><label>Km entrada</label><input type="number" id="f-kmEntrada" step="1"></div>
+          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" inputmode="numeric" value="2851"></div>
+          <div class="field"><label>Km entrada</label><input type="text" id="f-kmEntrada" inputmode="numeric"></div>
         </div>
         <div class="grid grid-3" style="margin-top:12px;">
-          <div class="field"><label>Km salida</label><input type="number" id="f-kmSalida" step="1"></div>
+          <div class="field"><label>Km salida</label><input type="text" id="f-kmSalida" inputmode="numeric"></div>
           <div class="field"><label>Km total</label><input type="text" id="f-kmTotal" class="auto" readonly></div>
-          <div class="field"><label>Total facturado (ticket)</label><input type="number" id="f-total" step="1"></div>
+          <div class="field"><label>Total facturado (UYU)</label><input type="text" id="f-total" inputmode="numeric"></div>
         </div>
-        <label class="checkline"><input type="checkbox" id="f-complementada"> Factura complementada (o coche distinto al habitual)</label>
-        <p class="hint">Si tildás esto, o si el Coche Nº no es el 2851, el Aporte Leyes pasa a $0 y "Otros" se calcula solo como el 4% del total.</p>
+        <div class="grid grid-2" style="margin-top:12px;">
+          <div class="field"><label>Hora entrada (opcional)</label><input type="time" id="f-horaEntrada"></div>
+          <div class="field"><label>Hora salida (opcional)</label><input type="time" id="f-horaSalida"></div>
+        </div>
+        <label class="checkline"><input type="checkbox" id="f-complementada"> Factura complementada</label>
+        <p class="hint">Coche distinto al 2851: Aporte Leyes $0 y Otros = 4% del total. Coche 2851 + complementada: además el Salario se completa hasta $1040 si quedaba por debajo.</p>
       </div>
-
+ 
       <div class="card">
-        <h3><span class="dot"></span>Gastos del móvil</h3>
+        <h3><span class="dot"></span>Gastos del móvil (UYU)</h3>
         <div class="grid grid-3">
           <div class="field"><label>Salario (29%)</label><input type="text" id="f-salario" class="auto" readonly></div>
-          <div class="field"><label>Viático</label><input type="number" id="f-viatico" step="1"></div>
-          <div class="field"><label>Combustible</label><input type="number" id="f-combustible" step="1"></div>
+          <div class="field"><label>Viático</label><input type="text" id="f-viatico" inputmode="numeric"></div>
+          <div class="field"><label>Combustible</label><input type="text" id="f-combustible" inputmode="numeric"></div>
         </div>
         <div class="grid grid-3" style="margin-top:12px;">
-          <div class="field"><label>Aceite</label><input type="number" id="f-aceite" step="1"></div>
-          <div class="field"><label>Gomería</label><input type="number" id="f-gomeria" step="1"></div>
-          <div class="field"><label>Lavado</label><input type="number" id="f-lavado" step="1"></div>
+          <div class="field"><label>Aceite</label><input type="text" id="f-aceite" inputmode="numeric"></div>
+          <div class="field"><label>Gomería</label><input type="text" id="f-gomeria" inputmode="numeric"></div>
+          <div class="field"><label>Lavado</label><input type="text" id="f-lavado" inputmode="numeric"></div>
         </div>
         <div class="grid grid-3" style="margin-top:12px;">
-          <div class="field"><label>Otros</label><input type="number" id="f-otros" step="1"></div>
+          <div class="field"><label>Otros</label><input type="text" id="f-otros" inputmode="numeric"></div>
           <div class="field"><label>Gastos (total)</label><input type="text" id="f-gastos" class="auto" readonly></div>
           <div class="field"><label>Líquido</label><input type="text" id="f-liquido" class="auto" readonly></div>
         </div>
       </div>
-
+ 
       <div class="card">
-        <h3><span class="dot"></span>Resultado del turno</h3>
+        <h3><span class="dot"></span>Resultado del turno (UYU)</h3>
         <div class="grid grid-3">
           <div class="field"><label>Aporte Leyes</label><input type="text" id="f-aporteLeyes" class="auto" readonly></div>
           <div class="field"><label>Sub Total</label><input type="text" id="f-subTotal" class="auto" readonly></div>
-          <div class="field"><label>H13</label><input type="number" id="f-h13" step="1"></div>
+          <div class="field"><label>H13</label><input type="text" id="f-h13" inputmode="numeric"></div>
         </div>
         <div class="grid grid-3" style="margin-top:12px;">
-          <div class="field"><label>Tarjeta de créd.</label><input type="number" id="f-tarjeta" step="1"></div>
+          <div class="field"><label>Tarjeta de créd.</label><input type="text" id="f-tarjeta" inputmode="numeric"></div>
           <div class="field"><label>TOTAL final</label><input type="text" id="f-totalFinal" class="auto" readonly></div>
-          <div class="field"><label>Efectivo en mano</label><input type="number" id="f-efectivo" step="1"></div>
+          <div class="field"><label>Efectivo en mano</label><input type="text" id="f-efectivo" inputmode="numeric"></div>
         </div>
         <div class="result-big" style="margin-top:14px;">
           <span class="label">Total Real</span>
-          <span class="value" id="f-totalReal">$0</span>
+          <span class="value" id="f-totalReal">$U 0</span>
         </div>
+        <p class="hint" id="f-gananciaHora" style="display:none; margin-top:10px;"></p>
       </div>
-
+ 
       <div class="actions-row">
         <button class="btn" id="btn-guardar">Guardar turno</button>
         <button class="btn secondary" id="btn-nuevo">Empezar turno nuevo</button>
       </div>
     </section>
-
+ 
     <!-- ================= VISTA HISTORIAL ================= -->
     <section class="view" id="view-historial">
       <h2 class="view-title">Historial de turnos</h2>
@@ -378,11 +384,10 @@
       <div id="hist-mobile"></div>
       <div id="hist-desktop" class="card" style="display:none; overflow-x:auto;"></div>
     </section>
-
+ 
     <!-- ================= VISTA ECONOMIA ================= -->
     <section class="view" id="view-economia">
       <h2 class="view-title">Control de Economía</h2>
-
       <div class="card">
         <div class="month-nav">
           <button id="mes-prev">‹</button>
@@ -392,24 +397,23 @@
         <div class="cal-grid" id="cal-dows"></div>
         <div class="cal-grid" id="cal-grid" style="margin-top:6px;"></div>
         <div class="legend">
-          <span><i style="background:var(--verde)"></i> Meta cumplida (≥$1000)</span>
-          <span><i style="background:var(--amarillo)"></i> Levemente bajo ($900-999)</span>
-          <span><i style="background:var(--naranja)"></i> Bajo ($750-899)</span>
-          <span><i style="background:var(--rojo)"></i> Muy bajo (&lt;$750)</span>
+          <span><i style="background:var(--verde)"></i> Meta cumplida (≥$U1000)</span>
+          <span><i style="background:var(--amarillo)"></i> Levemente bajo ($U900-999)</span>
+          <span><i style="background:var(--naranja)"></i> Bajo ($U750-899)</span>
+          <span><i style="background:var(--rojo)"></i> Muy bajo (&lt;$U750)</span>
+          <span><i style="background:var(--descanso)"></i> Día de descanso</span>
           <span><i style="background:var(--gris)"></i> Sin registro</span>
         </div>
       </div>
-
       <div class="card">
         <h3><span class="dot"></span>Evolución del mes</h3>
         <canvas id="chart-mes" height="220"></canvas>
       </div>
-
       <div class="card">
         <h3><span class="dot"></span>Cierre del mes</h3>
         <div class="stat-grid">
-          <div class="stat-box"><div class="k">Total del mes</div><div class="v" id="st-total">$0</div></div>
-          <div class="stat-box"><div class="k">Promedio diario</div><div class="v" id="st-prom">$0</div></div>
+          <div class="stat-box"><div class="k">Total del mes</div><div class="v" id="st-total">$U 0</div></div>
+          <div class="stat-box"><div class="k">Promedio diario</div><div class="v" id="st-prom">$U 0</div></div>
           <div class="stat-box"><div class="k">Mejor día</div><div class="v" id="st-mejor">—</div></div>
           <div class="stat-box"><div class="k">Peor día</div><div class="v" id="st-peor">—</div></div>
         </div>
@@ -425,7 +429,7 @@
         </div>
       </div>
     </section>
-
+ 
     <!-- ================= VISTA RESUMEN MENSUAL ================= -->
     <section class="view" id="view-resumen">
       <h2 class="view-title">Resumen mes a mes</h2>
@@ -434,64 +438,270 @@
     </section>
   </main>
 </div>
-
+ 
 <script>
 /* ============================================================
-   ESTADO Y PERSISTENCIA
+   UTILIDADES GENERALES
    ============================================================ */
-const STORAGE_KEY = 'liquidaciones-historial';
-let historial = {}; // { 'YYYY-MM-DD': record }
-let chartMes = null;
-let currentMonthCursor = new Date(); // control de que mes se ve en Economía
-
+function num(v){ const n = parseFloat(String(v).replace(/[^\d.-]/g,'')); return isNaN(n) ? 0 : n; }
 function todayISO(){
   const d = new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-
+function money(n){
+  const sign = n < 0 ? '-' : '';
+  return sign + '$U ' + Math.round(Math.abs(n)).toLocaleString('es-UY');
+}
+function onlyDigits(el, maxLen){
+  el.addEventListener('input', ()=>{
+    let v = el.value.replace(/[^\d]/g,'');
+    if (maxLen) v = v.slice(0, maxLen);
+    el.value = v;
+  });
+}
+function isMobileDevice(){
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+function validarCedulaUY(ciRaw){
+  const ci = String(ciRaw).replace(/\D/g,'');
+  if (ci.length < 7 || ci.length > 8) return false;
+  const padded = ci.length === 7 ? '0'+ci : ci;
+  const digits = padded.split('').map(Number);
+  const factores = [2,9,8,7,6,3,4];
+  let suma = 0;
+  for (let i=0;i<7;i++) suma += digits[i]*factores[i];
+  const resto = suma % 10;
+  const verificador = resto === 0 ? 0 : 10 - resto;
+  return verificador === digits[7];
+}
+ 
+/* ============================================================
+   ALMACENAMIENTO (namespaced por cédula del usuario activo)
+   ============================================================ */
 async function storageGet(key){
   try{
-    if (window.storage){
-      const res = await window.storage.get(key, false);
-      return res ? res.value : null;
-    } else {
-      return localStorage.getItem(key);
-    }
+    if (window.storage){ const res = await window.storage.get(key, false); return res ? res.value : null; }
+    return localStorage.getItem(key);
   }catch(e){ return null; }
 }
 async function storageSet(key, value){
   try{
-    if (window.storage){
-      await window.storage.set(key, value, false);
-    } else {
-      localStorage.setItem(key, value);
-    }
+    if (window.storage){ await window.storage.set(key, value, false); } else { localStorage.setItem(key, value); }
     return true;
   }catch(e){ return false; }
 }
 async function storageRemove(key){
-  try{
-    if (window.storage){
-      await window.storage.delete(key, false);
-    } else {
-      localStorage.removeItem(key);
-    }
-  }catch(e){ /* ignorar */ }
+  try{ if (window.storage){ await window.storage.delete(key, false); } else { localStorage.removeItem(key); } }catch(e){}
 }
-
+ 
+let currentUser = null; // { cedula, username }
+let historial = {};     // { 'YYYY-MM-DD': [ {id, ...campos} ] }
+let settings = { diaDescanso: '' };
+let chartMes = null;
+let currentMonthCursor = new Date();
+let editingTurno = null; // { dateKey, id } cuando se edita un turno existente
+ 
+function keyHistorial(){ return 'liquidaciones-historial:' + currentUser.cedula; }
+function keySettings(){ return 'ajustes:' + currentUser.cedula; }
+function keyDraft(){ return 'turno-borrador:' + currentUser.cedula; }
+ 
 async function loadHistorial(){
-  const raw = await storageGet(STORAGE_KEY);
+  const raw = await storageGet(keyHistorial());
   try{ historial = raw ? JSON.parse(raw) : {}; }catch(e){ historial = {}; }
 }
-async function saveHistorial(){
-  return await storageSet(STORAGE_KEY, JSON.stringify(historial));
+async function saveHistorial(){ return await storageSet(keyHistorial(), JSON.stringify(historial)); }
+ 
+async function loadSettings(){
+  const raw = await storageGet(keySettings());
+  try{ settings = raw ? JSON.parse(raw) : { diaDescanso:'' }; }catch(e){ settings = { diaDescanso:'' }; }
 }
-
+async function saveSettings(){ return await storageSet(keySettings(), JSON.stringify(settings)); }
+ 
+/* ============================================================
+   AUTENTICACION (multiusuario por cédula)
+   ============================================================ */
+const USERS_KEY = 'auth-users';
+const REMEMBER_KEY = 'auth-remembered-cedula';
+ 
+async function sha256(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function getUsers(){
+  const raw = await storageGet(USERS_KEY);
+  try{ return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } // { cedula: {username, passHash, bioCredId} }
+}
+async function saveUsers(users){ await storageSet(USERS_KEY, JSON.stringify(users)); }
+ 
+async function biometricAvailable(){
+  if (!isMobileDevice()) return false;
+  try{ return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }
+  catch(e){ return false; }
+}
+async function registerBiometric(username){
+  try{
+    const cred = await navigator.credentials.create({
+      publicKey:{
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp:{ name:'Liquidación de Viajes' },
+        user:{ id: crypto.getRandomValues(new Uint8Array(16)), name: username, displayName: username },
+        pubKeyCredParams:[{alg:-7,type:'public-key'},{alg:-257,type:'public-key'}],
+        authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
+        timeout:60000
+      }
+    });
+    return cred ? btoa(String.fromCharCode(...new Uint8Array(cred.rawId))) : null;
+  }catch(e){ return null; }
+}
+async function loginWithBiometric(credIdBase64){
+  try{
+    const rawId = Uint8Array.from(atob(credIdBase64), c=>c.charCodeAt(0));
+    const assertion = await navigator.credentials.get({
+      publicKey:{ challenge: crypto.getRandomValues(new Uint8Array(32)), allowCredentials:[{id:rawId,type:'public-key',transports:['internal']}], userVerification:'required', timeout:60000 }
+    });
+    return !!assertion;
+  }catch(e){ return false; }
+}
+ 
+function showLock(view){
+  document.getElementById('lock-screen').style.display = 'flex';
+  document.getElementById('app').classList.add('app-hidden');
+  document.getElementById('lock-setup').style.display = view === 'setup' ? 'block' : 'none';
+  document.getElementById('lock-login').style.display = view === 'login' ? 'block' : 'none';
+}
+function hideLock(){
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app').classList.remove('app-hidden');
+}
+ 
+async function refreshSetupBioVisibility(){
+  document.getElementById('setup-bio-wrap').style.display = (await biometricAvailable()) ? 'flex' : 'none';
+}
+async function showLoginScreen(prefillCedula){
+  showLock('login');
+  document.getElementById('login-cedula').value = prefillCedula || '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  const users = await getUsers();
+  const u = prefillCedula ? users[prefillCedula] : null;
+  const bioOk = u && u.bioCredId && await biometricAvailable();
+  document.getElementById('bio-divider').style.display = bioOk ? 'flex' : 'none';
+  document.getElementById('btn-bio-login').style.display = bioOk ? 'block' : 'none';
+  document.getElementById('btn-bio-login').dataset.credid = bioOk ? u.bioCredId : '';
+}
+ 
+async function handleSetupSubmit(){
+  const user = document.getElementById('setup-user').value.trim();
+  const cedula = document.getElementById('setup-cedula').value.trim();
+  const pass = document.getElementById('setup-pass').value;
+  const pass2 = document.getElementById('setup-pass2').value;
+  const errEl = document.getElementById('setup-error');
+  errEl.style.display = 'none';
+ 
+  if (!user || !cedula || !pass){ errEl.textContent = 'Completá usuario, cédula y contraseña.'; errEl.style.display='block'; return; }
+  if (!validarCedulaUY(cedula)){ errEl.textContent = 'La cédula ingresada no es válida.'; errEl.style.display='block'; return; }
+  if (pass !== pass2){ errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display='block'; return; }
+ 
+  const users = await getUsers();
+  if (users[cedula]){ errEl.textContent = 'Ya existe un usuario con esa cédula. Andá a "Ya tengo cuenta".'; errEl.style.display='block'; return; }
+ 
+  const entry = { username: user, passHash: await sha256(pass), bioCredId: null };
+  if (document.getElementById('setup-bio').checked && await biometricAvailable()){
+    const credId = await registerBiometric(user);
+    if (credId) entry.bioCredId = credId;
+  }
+  users[cedula] = entry;
+  await saveUsers(users);
+  await storageSet(REMEMBER_KEY, cedula);
+  currentUser = { cedula, username: user };
+  hideLock();
+  appInit();
+}
+ 
+async function handleLoginSubmit(){
+  const cedula = document.getElementById('login-cedula').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  const users = await getUsers();
+  const u = users[cedula];
+  const passHash = await sha256(pass);
+  if (!u || passHash !== u.passHash){ errEl.textContent = 'Cédula o contraseña incorrectos.'; errEl.style.display = 'block'; return; }
+ 
+  if (document.getElementById('login-remember').checked){ await storageSet(REMEMBER_KEY, cedula); }
+  else { await storageRemove(REMEMBER_KEY); }
+  currentUser = { cedula, username: u.username };
+  hideLock();
+  appInit();
+}
+ 
+async function handleBioLogin(){
+  const credId = document.getElementById('btn-bio-login').dataset.credid;
+  const cedula = document.getElementById('login-cedula').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!credId){ return; }
+  const ok = await loginWithBiometric(credId);
+  if (ok){
+    const users = await getUsers();
+    currentUser = { cedula, username: users[cedula].username };
+    hideLock();
+    appInit();
+  } else {
+    errEl.textContent = 'No se pudo validar la huella. Probá con la contraseña.'; errEl.style.display = 'block';
+  }
+}
+ 
+async function logout(){
+  const ok = confirm('¿Cerrar sesión? Vas a tener que ingresar tu cédula y contraseña de nuevo.');
+  if (!ok) return;
+  await storageRemove(REMEMBER_KEY);
+  location.reload();
+}
+ 
+async function ensureAdminUser(){
+  const users = await getUsers();
+  if (!users['00000000']){
+    users['00000000'] = { username: 'admin', passHash: await sha256('admin'), bioCredId: null };
+    await saveUsers(users);
+  }
+}
+ 
+async function authGate(){
+  onlyDigits(document.getElementById('setup-cedula'), 8);
+  onlyDigits(document.getElementById('login-cedula'), 8);
+  onlyDigits(document.getElementById('cp-cedula'), 8);
+ 
+  await ensureAdminUser();
+ 
+  const remembered = await storageGet(REMEMBER_KEY);
+  const users = await getUsers();
+  if (remembered && users[remembered]){
+    currentUser = { cedula: remembered, username: users[remembered].username };
+    hideLock();
+    appInit();
+    return;
+  }
+  if (Object.keys(users).length === 0){
+    showLock('setup');
+    await refreshSetupBioVisibility();
+  } else {
+    await showLoginScreen(remembered || '');
+  }
+}
+ 
 /* ============================================================
    CALCULO DE LA PLANILLA
    ============================================================ */
-function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
-
+function calcHoras(hEntrada, hSalida){
+  if (!hEntrada || !hSalida) return null;
+  const [h1,m1] = hEntrada.split(':').map(Number);
+  const [h2,m2] = hSalida.split(':').map(Number);
+  let diff = (h2*60+m2) - (h1*60+m1);
+  if (diff <= 0) diff += 24*60;
+  return diff/60;
+}
+ 
 function compute(input){
   const total = num(input.total);
   const viatico = num(input.viatico);
@@ -507,39 +717,81 @@ function compute(input){
   const coche = (input.coche || '').trim();
   const complementada = !!input.complementada;
   const esHabitual = (coche === '2851') && !complementada;
-
-  const salario = total * 0.29;
-  const otros = esHabitual ? num(input.otros) : total * 0.04;
+ 
+  const salarioBase = total * 0.29;
+  let salario = salarioBase;
+  let aporteLeyes = 0;
+  let otros;
+ 
+  if (esHabitual){
+    aporteLeyes = salarioBase * 0.196;
+    otros = num(input.otros);
+  } else {
+    aporteLeyes = 0;
+    otros = total * 0.04;
+    if (coche === '2851' && complementada){
+      salario = salarioBase < 1040 ? 1040 : salarioBase;
+    }
+  }
+ 
   const gastos = salario + viatico + combustible + aceite + gomeria + lavado + otros;
   const liquido = total - gastos;
-  const aporteLeyes = esHabitual ? salario * 0.196 : 0;
   const subTotal = liquido + aporteLeyes;
   const totalFinal = subTotal - h13 - tarjeta;
   const totalReal = totalFinal + efectivo;
   const kmTotal = kmSalida - kmEntrada;
-
+ 
+  const horas = calcHoras(input.horaEntrada, input.horaSalida);
+  const gananciaHora = (horas && horas > 0) ? totalReal / horas : null;
+ 
   return { total, viatico, combustible, aceite, gomeria, lavado, h13, tarjeta, efectivo,
-    kmEntrada, kmSalida, coche, complementada, esHabitual,
-    salario, otros, gastos, liquido, aporteLeyes, subTotal, totalFinal, totalReal, kmTotal };
+    kmEntrada, kmSalida, coche, complementada, esHabitual, horaEntrada: input.horaEntrada || '', horaSalida: input.horaSalida || '',
+    salario, otros, gastos, liquido, aporteLeyes, subTotal, totalFinal, totalReal, kmTotal, horas, gananciaHora };
 }
-
-function money(n){
-  const sign = n < 0 ? '-' : '';
-  return sign + '$' + Math.round(Math.abs(n)).toLocaleString('es-UY');
-}
-
+ 
 function colorFor(totalReal){
   if (totalReal >= 1000) return {name:'verde', hex:'#2E7D46', bg:'#E4F2E8', label:'Meta cumplida'};
   if (totalReal >= 900)  return {name:'amarillo', hex:'#B8862B', bg:'#FBF0DA', label:'Levemente bajo'};
   if (totalReal >= 750)  return {name:'naranja', hex:'#C9642E', bg:'#FBE7DA', label:'Bajo la meta'};
   return {name:'rojo', hex:'#B33A3A', bg:'#F7E1E1', label:'Muy bajo'};
 }
-
+ 
+function esDiaDescanso(dateObj){
+  if (settings.diaDescanso === '' || settings.diaDescanso === undefined || settings.diaDescanso === null) return false;
+  return dateObj.getDay() === Number(settings.diaDescanso);
+}
+ 
+/* ============================================================
+   MODELO: turnos por día (array)
+   ============================================================ */
+function turnosDelDia(dateKey){ return historial[dateKey] || []; }
+function totalRealDelDia(dateKey){ return turnosDelDia(dateKey).reduce((a,t)=>a+t.totalReal,0); }
+ 
+function guardarOActualizarTurno(dateKey, input){
+  const c = compute(input);
+  if (!historial[dateKey]) historial[dateKey] = [];
+  if (editingTurno && editingTurno.dateKey === dateKey){
+    const idx = historial[dateKey].findIndex(t=>t.id === editingTurno.id);
+    if (idx >= 0){ historial[dateKey][idx] = { ...input, ...c, id: editingTurno.id, savedAt: new Date().toISOString() }; }
+    else { historial[dateKey].push({ ...input, ...c, id: editingTurno.id, savedAt: new Date().toISOString() }); }
+  } else if (editingTurno && editingTurno.dateKey !== dateKey){
+    // se cambió la fecha del turno que se estaba editando: se mueve
+    const oldArr = historial[editingTurno.dateKey] || [];
+    const idx = oldArr.findIndex(t=>t.id === editingTurno.id);
+    if (idx >= 0) oldArr.splice(idx,1);
+    if (oldArr.length === 0) delete historial[editingTurno.dateKey];
+    historial[dateKey].push({ ...input, ...c, id: editingTurno.id, savedAt: new Date().toISOString() });
+  } else {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    historial[dateKey].push({ ...input, ...c, id, savedAt: new Date().toISOString() });
+  }
+}
+ 
 /* ============================================================
    VISTA TURNO
    ============================================================ */
-const formIds = ['fecha','coche','kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo'];
-
+const formNumericIds = ['kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo'];
+ 
 function getFormInput(){
   const g = id => document.getElementById('f-'+id);
   return {
@@ -557,10 +809,12 @@ function getFormInput(){
     otros: g('otros').value,
     h13: g('h13').value,
     tarjeta: g('tarjeta').value,
-    efectivo: g('efectivo').value
+    efectivo: g('efectivo').value,
+    horaEntrada: g('horaEntrada').value,
+    horaSalida: g('horaSalida').value
   };
 }
-
+ 
 function refreshFormComputed(){
   const input = getFormInput();
   const c = compute(input);
@@ -572,7 +826,13 @@ function refreshFormComputed(){
   document.getElementById('f-subTotal').value = money(c.subTotal);
   document.getElementById('f-totalFinal').value = money(c.totalFinal);
   document.getElementById('f-totalReal').textContent = money(c.totalReal);
-
+ 
+  const gEl = document.getElementById('f-gananciaHora');
+  if (c.gananciaHora !== null){
+    gEl.style.display = 'block';
+    gEl.textContent = `Duración del turno: ${c.horas.toFixed(1)} hs · Ganancia por hora: ${money(c.gananciaHora)}`;
+  } else { gEl.style.display = 'none'; }
+ 
   const otrosField = document.getElementById('f-otros');
   if (!c.esHabitual){
     otrosField.value = Math.round(c.otros);
@@ -582,162 +842,178 @@ function refreshFormComputed(){
     otrosField.readOnly = false;
     otrosField.classList.remove('auto');
   }
-  document.getElementById('coche-sub').textContent = 'COCHE Nº ' + (input.coche || '—') + ' · REGISTRO PRIVADO';
+  document.getElementById('coche-sub').textContent = 'COCHE Nº ' + (input.coche || '—') + ' · ' + (currentUser ? currentUser.username.toUpperCase() : '');
+  saveDraft(input);
 }
-
-function clearForm(){
-  document.getElementById('f-fecha').value = todayISO();
-  document.getElementById('f-coche').value = '2851';
-  document.getElementById('f-complementada').checked = false;
-  ['kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo'].forEach(id=>{
-    document.getElementById('f-'+id).value = '';
+ 
+async function saveDraft(input){
+  if (!currentUser) return;
+  if (editingTurno) return; // no pisar el borrador si se está editando un turno guardado
+  await storageSet(keyDraft(), JSON.stringify(input));
+}
+async function clearDraft(){ if (currentUser) await storageRemove(keyDraft()); }
+ 
+function fillForm(input){
+  const g = id => document.getElementById('f-'+id);
+  g('fecha').value = input.fecha || todayISO();
+  g('coche').value = input.coche ?? '2851';
+  g('complementada').checked = !!input.complementada;
+  ['kmEntrada','kmSalida','total','viatico','combustible','aceite','gomeria','lavado','otros','h13','tarjeta','efectivo','horaEntrada','horaSalida'].forEach(id=>{
+    g(id).value = input[id] ?? '';
   });
   refreshFormComputed();
 }
-
-function loadRecordIntoForm(dateKey){
-  const r = historial[dateKey];
-  if (!r) return;
-  document.getElementById('f-fecha').value = dateKey;
-  document.getElementById('f-coche').value = r.coche;
-  document.getElementById('f-complementada').checked = r.complementada;
-  document.getElementById('f-kmEntrada').value = r.kmEntrada || '';
-  document.getElementById('f-kmSalida').value = r.kmSalida || '';
-  document.getElementById('f-total').value = r.total || '';
-  document.getElementById('f-viatico').value = r.viatico || '';
-  document.getElementById('f-combustible').value = r.combustible || '';
-  document.getElementById('f-aceite').value = r.aceite || '';
-  document.getElementById('f-gomeria').value = r.gomeria || '';
-  document.getElementById('f-lavado').value = r.lavado || '';
-  document.getElementById('f-otros').value = r.otros || '';
-  document.getElementById('f-h13').value = r.h13 || '';
-  document.getElementById('f-tarjeta').value = r.tarjeta || '';
-  document.getElementById('f-efectivo').value = r.efectivo || '';
-  refreshFormComputed();
+ 
+function clearForm(dateKeyPrefill){
+  editingTurno = null;
+  fillForm({ fecha: dateKeyPrefill || todayISO(), coche:'2851' });
+  clearDraft();
+}
+ 
+function loadTurnoIntoForm(dateKey, id){
+  const t = (historial[dateKey]||[]).find(x=>x.id===id);
+  if (!t) return;
+  editingTurno = { dateKey, id };
+  fillForm({ ...t, fecha: dateKey });
   switchView('turno');
 }
-
+ 
 async function guardarTurno(){
   const input = getFormInput();
-  const dateKey = input.fecha;
-  if (historial[dateKey]){
-    const ok = confirm('Ya existe una liquidación guardada para el ' + dateKey + '. ¿Querés reemplazarla con estos datos?');
-    if (!ok) return;
-  }
-  const c = compute(input);
-  historial[dateKey] = { ...input, ...c, savedAt: new Date().toISOString() };
+  guardarOActualizarTurno(input.fecha, input);
   const ok = await saveHistorial();
+  await clearDraft();
   if (ok){
+    const wasEditing = !!editingTurno;
+    editingTurno = null;
     renderHistorial();
     renderEconomia();
-    alert('Turno guardado para el ' + dateKey + '.');
+    alert(wasEditing ? 'Turno actualizado.' : 'Turno guardado para el ' + input.fecha + '.');
   } else {
     alert('No se pudo guardar el turno. Intentá de nuevo.');
   }
 }
-
+ 
 /* ============================================================
-   VISTA HISTORIAL
+   VISTA HISTORIAL (agrupado por día)
    ============================================================ */
 function renderHistorial(){
-  const dates = Object.keys(historial).sort().reverse();
+  const dates = Object.keys(historial).filter(d=>historial[d].length>0).sort().reverse();
   const mobileEl = document.getElementById('hist-mobile');
   const desktopEl = document.getElementById('hist-desktop');
-
+ 
   if (dates.length === 0){
     mobileEl.innerHTML = '<div class="empty">Todavía no guardaste ningún turno.<br>Completá la planilla y tocá "Guardar turno".</div>';
     desktopEl.innerHTML = mobileEl.innerHTML;
     return;
   }
-
-  mobileEl.innerHTML = dates.map(d => ticketHTML(d, historial[d])).join('');
-  desktopEl.innerHTML = tableHTML(dates);
-
-  mobileEl.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', ()=>loadRecordIntoForm(b.dataset.edit)));
-  mobileEl.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', ()=>eliminarTurno(b.dataset.del)));
-  desktopEl.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', ()=>loadRecordIntoForm(b.dataset.edit)));
-  desktopEl.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', ()=>eliminarTurno(b.dataset.del)));
+ 
+  mobileEl.innerHTML = dates.map(d => dayTicketHTML(d)).join('');
+  desktopEl.innerHTML = dayTableHTML(dates);
+ 
+  mobileEl.querySelectorAll('[data-day]').forEach(el => el.addEventListener('click', ()=>openDayDetail(el.dataset.day)));
+  desktopEl.querySelectorAll('[data-day]').forEach(el => el.addEventListener('click', ()=>openDayDetail(el.dataset.day)));
 }
-
-function ticketHTML(dateKey, r){
-  const col = colorFor(r.totalReal);
+ 
+function dayTicketHTML(dateKey){
+  const turnos = turnosDelDia(dateKey);
+  const total = totalRealDelDia(dateKey);
+  const col = colorFor(total);
   return `
-  <div class="ticket">
+  <div class="ticket" data-day="${dateKey}">
     <div class="ticket-head">
-      <span class="fecha">${dateKey}</span>
+      <span class="fecha">${dateKey}${turnos.length>1 ? ' · '+turnos.length+' turnos' : ''}</span>
       <span class="status-chip" style="background:${col.bg};color:${col.hex}">${col.label}</span>
     </div>
-    <div class="ticket-row"><span>Coche</span><span>${r.coche}${r.complementada ? ' (compl.)' : ''}</span></div>
-    <div class="ticket-row"><span>Total facturado</span><span>${money(r.total)}</span></div>
-    <div class="ticket-row"><span>Gastos</span><span>${money(r.gastos)}</span></div>
-    <div class="ticket-row"><span>Líquido</span><span>${money(r.liquido)}</span></div>
-    <div class="ticket-row"><span>TOTAL final</span><span>${money(r.totalFinal)}</span></div>
-    <div class="ticket-row"><span>Efectivo en mano</span><span>${money(r.efectivo)}</span></div>
-    <div class="ticket-row strong"><span>TOTAL REAL</span><span>${money(r.totalReal)}</span></div>
-    <div class="ticket-actions">
-      <button class="btn secondary" data-edit="${dateKey}">Editar</button>
-      <button class="btn danger" data-del="${dateKey}">Eliminar</button>
-    </div>
+    <div class="ticket-row strong"><span>TOTAL REAL del día</span><span>${money(total)}</span></div>
+    <div class="hint">Tocá para ver el detalle de cada turno</div>
   </div>`;
 }
-
-function tableHTML(dates){
+ 
+function dayTableHTML(dates){
   const rows = dates.map(d=>{
-    const r = historial[d];
-    const col = colorFor(r.totalReal);
-    return `<tr>
+    const turnos = turnosDelDia(d);
+    const total = totalRealDelDia(d);
+    const col = colorFor(total);
+    return `<tr data-day="${d}">
       <td>${d}</td>
-      <td>${r.coche}${r.complementada?' *':''}</td>
-      <td>${money(r.total)}</td>
-      <td>${money(r.gastos)}</td>
-      <td>${money(r.totalFinal)}</td>
-      <td>${money(r.totalReal)}</td>
+      <td>${turnos.length}</td>
+      <td>${money(total)}</td>
       <td><span class="status-dot" style="background:${col.hex}"></span></td>
-      <td class="tbl-actions">
-        <button data-edit="${d}">Editar</button>
-        <button class="del" data-del="${d}">Eliminar</button>
-      </td>
     </tr>`;
   }).join('');
-  return `<table class="hist-table">
-    <thead><tr>
-      <th>Fecha</th><th>Coche</th><th>Total</th><th>Gastos</th><th>Total final</th><th>Total real</th><th>Estado</th><th></th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  return `<table class="hist-table"><thead><tr><th>Fecha</th><th>Turnos</th><th>Total real</th><th>Estado</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
-
-async function eliminarTurno(dateKey){
-  const ok = confirm('¿Eliminar la liquidación del ' + dateKey + '? Esta acción no se puede deshacer.');
-  if (!ok) return;
-  delete historial[dateKey];
-  await saveHistorial();
-  renderHistorial();
-  renderEconomia();
+ 
+function openDayDetail(dateKey){
+  const turnos = turnosDelDia(dateKey);
+  document.getElementById('dd-title').textContent = 'Turnos del ' + dateKey;
+  const list = document.getElementById('dd-list');
+  if (turnos.length === 0){
+    list.innerHTML = '<p class="hint">Todavía no hay turnos cargados este día.</p>';
+  } else {
+    list.innerHTML = turnos.map((t,i)=>`
+      <div class="turno-detail-item">
+        <div class="tdi-row"><span>Turno</span><span>#${i+1}${t.coche?' · Coche '+t.coche:''}</span></div>
+        <div class="tdi-row"><span>Total facturado</span><span>${money(t.total)}</span></div>
+        <div class="tdi-row"><span>Gastos</span><span>${money(t.gastos)}</span></div>
+        <div class="tdi-row"><span>TOTAL final</span><span>${money(t.totalFinal)}</span></div>
+        <div class="tdi-row"><span>Efectivo en mano</span><span>${money(t.efectivo)}</span></div>
+        <div class="tdi-row" style="font-weight:700;"><span>Total Real</span><span>${money(t.totalReal)}</span></div>
+        ${t.gananciaHora ? `<div class="tdi-row"><span>Ganancia/hora</span><span>${money(t.gananciaHora)}</span></div>` : ''}
+        <div class="tdi-actions">
+          <button class="btn secondary" data-edit-day="${dateKey}" data-edit-id="${t.id}">Editar</button>
+          <button class="btn danger" data-del-day="${dateKey}" data-del-id="${t.id}">Eliminar</button>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('modal-day-detail').classList.add('open');
+  document.getElementById('modal-day-detail').dataset.day = dateKey;
+ 
+  list.querySelectorAll('[data-edit-id]').forEach(b=>b.addEventListener('click', ()=>{
+    closeModal('modal-day-detail');
+    loadTurnoIntoForm(b.dataset.editDay, b.dataset.editId);
+  }));
+  list.querySelectorAll('[data-del-id]').forEach(b=>b.addEventListener('click', async ()=>{
+    const ok = confirm('¿Eliminar este turno? No se puede deshacer.');
+    if (!ok) return;
+    const arr = historial[b.dataset.delDay] || [];
+    const idx = arr.findIndex(x=>x.id===b.dataset.delId);
+    if (idx>=0) arr.splice(idx,1);
+    if (arr.length===0) delete historial[b.dataset.delDay];
+    await saveHistorial();
+    renderHistorial(); renderEconomia();
+    openDayDetail(dateKey);
+  }));
 }
-
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+ 
 function exportHistorialExcel(){
   const dates = Object.keys(historial).sort();
-  if (dates.length === 0){ alert('No hay turnos guardados todavía.'); return; }
-  const rows = dates.map(d=>{
-    const r = historial[d];
-    return {
-      Fecha: d, 'Coche N°': r.coche, Complementada: r.complementada ? 'Sí' : 'No',
-      'Km entrada': r.kmEntrada, 'Km salida': r.kmSalida, 'Km total': r.kmTotal,
-      'Total facturado': r.total, Salario: Math.round(r.salario), Viatico: r.viatico,
-      Combustible: r.combustible, Aceite: r.aceite, Gomeria: r.gomeria, Lavado: r.lavado,
-      Otros: Math.round(r.otros), Gastos: Math.round(r.gastos), Liquido: Math.round(r.liquido),
-      'Aporte Leyes': Math.round(r.aporteLeyes), 'Sub Total': Math.round(r.subTotal),
-      H13: r.h13, 'Tarjeta Créd.': r.tarjeta, 'TOTAL final': Math.round(r.totalFinal),
-      'Efectivo en mano': r.efectivo, 'TOTAL REAL': Math.round(r.totalReal)
-    };
+  const rows = [];
+  dates.forEach(d=>{
+    turnosDelDia(d).forEach(r=>{
+      rows.push({
+        Fecha: d, 'Coche N°': r.coche, Complementada: r.complementada ? 'Sí' : 'No',
+        'Hora entrada': r.horaEntrada || '', 'Hora salida': r.horaSalida || '',
+        'Km entrada': r.kmEntrada, 'Km salida': r.kmSalida, 'Km total': r.kmTotal,
+        'Total facturado': r.total, Salario: Math.round(r.salario), Viatico: r.viatico,
+        Combustible: r.combustible, Aceite: r.aceite, Gomeria: r.gomeria, Lavado: r.lavado,
+        Otros: Math.round(r.otros), Gastos: Math.round(r.gastos), Liquido: Math.round(r.liquido),
+        'Aporte Leyes': Math.round(r.aporteLeyes), 'Sub Total': Math.round(r.subTotal),
+        H13: r.h13, 'Tarjeta Créd.': r.tarjeta, 'TOTAL final': Math.round(r.totalFinal),
+        'Efectivo en mano': r.efectivo, 'TOTAL REAL': Math.round(r.totalReal),
+        'Ganancia por hora': r.gananciaHora ? Math.round(r.gananciaHora) : ''
+      });
+    });
   });
+  if (rows.length === 0){ alert('No hay turnos guardados todavía.'); return; }
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Liquidaciones');
   XLSX.writeFile(wb, 'liquidaciones_de_viajes.xlsx');
 }
-
+ 
 function importHistorialExcel(file){
   const reader = new FileReader();
   reader.onload = async (e) => {
@@ -746,39 +1022,26 @@ function importHistorialExcel(file){
       const sheetName = wb.SheetNames.includes('Liquidaciones') ? 'Liquidaciones' : wb.SheetNames[0];
       const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
       if (rows.length === 0){ alert('El archivo no tiene filas para restaurar.'); return; }
-
-      const ok = confirm(`Se encontraron ${rows.length} turnos en el archivo. Los que coincidan en fecha con turnos ya guardados van a reemplazarse. ¿Continuar?`);
+      const ok = confirm(`Se encontraron ${rows.length} turnos en el archivo. Se van a agregar a tu historial. ¿Continuar?`);
       if (!ok) return;
-
+ 
       let importados = 0;
       rows.forEach(row=>{
         const fecha = row['Fecha'];
         if (!fecha) return;
         const input = {
-          fecha,
-          coche: String(row['Coche N°'] ?? '2851'),
-          complementada: row['Complementada'] === 'Sí',
-          kmEntrada: row['Km entrada'] || 0,
-          kmSalida: row['Km salida'] || 0,
-          total: row['Total facturado'] || 0,
-          viatico: row['Viatico'] || 0,
-          combustible: row['Combustible'] || 0,
-          aceite: row['Aceite'] || 0,
-          gomeria: row['Gomeria'] || 0,
-          lavado: row['Lavado'] || 0,
-          otros: row['Otros'] || 0,
-          h13: row['H13'] || 0,
-          tarjeta: row['Tarjeta Créd.'] || 0,
-          efectivo: row['Efectivo en mano'] || 0
+          fecha, coche: String(row['Coche N°'] ?? '2851'), complementada: row['Complementada'] === 'Sí',
+          horaEntrada: row['Hora entrada'] || '', horaSalida: row['Hora salida'] || '',
+          kmEntrada: row['Km entrada'] || 0, kmSalida: row['Km salida'] || 0, total: row['Total facturado'] || 0,
+          viatico: row['Viatico'] || 0, combustible: row['Combustible'] || 0, aceite: row['Aceite'] || 0,
+          gomeria: row['Gomeria'] || 0, lavado: row['Lavado'] || 0, otros: row['Otros'] || 0,
+          h13: row['H13'] || 0, tarjeta: row['Tarjeta Créd.'] || 0, efectivo: row['Efectivo en mano'] || 0
         };
-        const c = compute(input);
-        historial[fecha] = { ...input, ...c, savedAt: new Date().toISOString() };
+        guardarOActualizarTurno(fecha, input);
         importados++;
       });
-
       await saveHistorial();
-      renderHistorial();
-      renderEconomia();
+      renderHistorial(); renderEconomia();
       alert(`Se restauraron ${importados} turnos desde el Excel.`);
     }catch(err){
       console.error(err);
@@ -787,48 +1050,53 @@ function importHistorialExcel(file){
   };
   reader.readAsArrayBuffer(file);
 }
-
+ 
 /* ============================================================
    VISTA ECONOMIA
    ============================================================ */
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DOWS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-
-function isoOfDay(year, month, day){
-  return year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-}
-
+ 
+function isoOfDay(year, month, day){ return year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0'); }
+ 
 function renderEconomia(){
   const year = currentMonthCursor.getFullYear();
   const month = currentMonthCursor.getMonth();
   document.getElementById('mes-label').textContent = MESES[month] + ' ' + year;
-
-  // Dow header (solo una vez, pero lo re-renderizamos igual, es barato)
   document.getElementById('cal-dows').innerHTML = DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
-
+ 
   const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay() + 6) % 7; // lunes = 0
+  const startOffset = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month+1, 0).getDate();
   const todayKey = todayISO();
-
+ 
   let cells = '';
   for (let i=0;i<startOffset;i++) cells += '<div class="cal-cell empty-cell"></div>';
-  const monthValues = [];
+  const monthValues = []; // días con datos (para stats/gráfico), excluye descansos sin turno
   for (let day=1; day<=daysInMonth; day++){
     const key = isoOfDay(year, month, day);
-    const rec = historial[key];
-    let bg = 'var(--gris-bg)', fg = 'var(--gris)', hasData = false;
-    if (rec){
-      const col = colorFor(rec.totalReal);
-      bg = col.bg; fg = col.hex; hasData = true;
-      monthValues.push({date:key, day, totalReal:rec.totalReal, color:col});
+    const dObj = new Date(year, month, day);
+    const turnos = turnosDelDia(key);
+    const isDescanso = esDiaDescanso(dObj);
+    let bg = 'var(--gris-bg)', fg = 'var(--gris)', clickable = false;
+    if (turnos.length > 0){
+      const total = totalRealDelDia(key);
+      const col = colorFor(total);
+      bg = col.bg; fg = col.hex; clickable = true;
+      monthValues.push({date:key, day, totalReal: total, color:col});
+    } else if (isDescanso){
+      bg = 'var(--descanso-bg)'; fg = 'var(--descanso)';
     }
     const isToday = key === todayKey ? ' today' : '';
-    cells += `<div class="cal-cell${hasData?' has-data':''}${isToday}" style="background:${bg};color:${fg}" title="${hasData? key+': '+money(rec.totalReal) : key+': sin registro'}">${day}</div>`;
+    const multiMark = turnos.length > 1 ? `<span class="multi-mark">●${turnos.length}</span>` : '';
+    cells += `<div class="cal-cell${clickable?' has-data':''}${isDescanso&&turnos.length===0?' is-descanso':''}${isToday}" style="background:${bg};color:${fg}" data-day="${key}" title="${turnos.length? key+': '+money(totalRealDelDia(key)) : (isDescanso? key+': descanso' : key+': sin registro')}">${day}${multiMark}</div>`;
   }
   document.getElementById('cal-grid').innerHTML = cells;
-
-  // Chart
+  document.querySelectorAll('#cal-grid .cal-cell[data-day]').forEach(el=>{
+    const key = el.dataset.day;
+    if (turnosDelDia(key).length > 0) el.addEventListener('click', ()=>openDayDetail(key));
+  });
+ 
   const labels = monthValues.map(v=>v.day);
   const data = monthValues.map(v=>v.totalReal);
   const pointColors = monthValues.map(v=>v.color.hex);
@@ -836,46 +1104,20 @@ function renderEconomia(){
   if (chartMes) chartMes.destroy();
   chartMes = new Chart(ctx, {
     type:'line',
-    data:{
-      labels,
-      datasets:[
-        {
-          label:'Total Real',
-          data,
-          borderColor:'#0F5C5C',
-          backgroundColor:'rgba(15,92,92,0.08)',
-          pointBackgroundColor:pointColors,
-          pointRadius:5,
-          tension:0.25,
-          fill:true
-        },
-        {
-          label:'Meta ($1000)',
-          data: labels.map(()=>1000),
-          borderColor:'#B33A3A',
-          borderDash:[6,5],
-          pointRadius:0,
-          fill:false
-        }
-      ]
-    },
-    options:{
-      responsive:true,
-      plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter'}, boxWidth:12 } } },
-      scales:{
-        x:{ title:{display:true, text:'Día del mes'} },
-        y:{ beginAtZero:true, ticks:{ callback:v=>'$'+v } }
-      }
-    }
+    data:{ labels, datasets:[
+      { label:'Total Real', data, borderColor:'#0F5C5C', backgroundColor:'rgba(15,92,92,0.08)', pointBackgroundColor:pointColors, pointRadius:5, tension:0.25, fill:true },
+      { label:'Meta ($U1000)', data: labels.map(()=>1000), borderColor:'#B33A3A', borderDash:[6,5], pointRadius:0, fill:false }
+    ]},
+    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter'}, boxWidth:12 } } },
+      scales:{ x:{ title:{display:true, text:'Día del mes'} }, y:{ beginAtZero:true, ticks:{ callback:v=>'$U'+v } } } }
   });
-
-  // Stats
+ 
   const vals = monthValues.map(v=>v.totalReal);
   const total = vals.reduce((a,b)=>a+b,0);
   const prom = vals.length ? total/vals.length : 0;
   document.getElementById('st-total').textContent = money(total);
   document.getElementById('st-prom').textContent = money(prom);
-
+ 
   if (vals.length){
     const best = monthValues.reduce((a,b)=> b.totalReal>a.totalReal ? b : a);
     const worst = monthValues.reduce((a,b)=> b.totalReal<a.totalReal ? b : a);
@@ -885,113 +1127,96 @@ function renderEconomia(){
     document.getElementById('st-mejor').textContent = '—';
     document.getElementById('st-peor').textContent = '—';
   }
-
+ 
   const counts = {verde:0, amarillo:0, naranja:0, rojo:0};
   monthValues.forEach(v=> counts[v.color.name]++ );
   document.getElementById('st-verde').textContent = counts.verde;
   document.getElementById('st-amarillo').textContent = counts.amarillo;
   document.getElementById('st-naranja').textContent = counts.naranja;
   document.getElementById('st-rojo').textContent = counts.rojo;
-
-  // Analysis vs mes anterior
+ 
   const prevCursor = new Date(year, month-1, 1);
   const prevValues = [];
   const daysPrev = new Date(prevCursor.getFullYear(), prevCursor.getMonth()+1, 0).getDate();
   for (let day=1; day<=daysPrev; day++){
     const key = isoOfDay(prevCursor.getFullYear(), prevCursor.getMonth(), day);
-    if (historial[key]) prevValues.push(historial[key].totalReal);
+    if (turnosDelDia(key).length>0) prevValues.push(totalRealDelDia(key));
   }
   const promPrev = prevValues.length ? prevValues.reduce((a,b)=>a+b,0)/prevValues.length : null;
-
+ 
   const analysisEl = document.getElementById('analysis-text');
   if (vals.length === 0){
     analysisEl.textContent = 'Todavía no hay turnos guardados para ' + MESES[month] + '.';
   } else {
     let calidad;
-    if (prom >= 1000) calidad = 'un buen mes: el promedio diario superó la meta de $1000';
-    else if (prom >= 850) calidad = 'un mes aceptable, aunque el promedio quedó por debajo de la meta de $1000';
-    else calidad = 'un mes flojo, con el promedio bastante por debajo de la meta de $1000';
-
+    if (prom >= 1000) calidad = 'un buen mes: el promedio diario superó la meta de $U1000';
+    else if (prom >= 850) calidad = 'un mes aceptable, aunque el promedio quedó por debajo de la meta de $U1000';
+    else calidad = 'un mes flojo, con el promedio bastante por debajo de la meta de $U1000';
     let comparacion = '';
     if (promPrev !== null && promPrev > 0){
       const cambio = ((prom - promPrev) / promPrev) * 100;
       const dir = cambio >= 0 ? 'mejor' : 'peor';
       comparacion = ` Comparado con el mes anterior (promedio ${money(promPrev)}), este mes viene un ${Math.abs(cambio).toFixed(1)}% ${dir}.`;
     }
-
-    const diasVerdes = counts.verde;
-    const totalDias = vals.length;
-    analysisEl.textContent = `${MESES[month]} viene siendo ${calidad}. El promedio diario es ${money(prom)}, con ${diasVerdes} de ${totalDias} días alcanzando la meta.${comparacion}`;
+    analysisEl.textContent = `${MESES[month]} viene siendo ${calidad}. El promedio diario es ${money(prom)}, con ${counts.verde} de ${vals.length} días alcanzando la meta.${comparacion}`;
   }
 }
-
+ 
 function exportEconomiaExcel(){
-  const dates = Object.keys(historial).sort();
+  const dates = Object.keys(historial).filter(d=>turnosDelDia(d).length>0).sort();
   if (dates.length === 0){ alert('No hay datos guardados todavía.'); return; }
   const daily = dates.map(d=>{
-    const r = historial[d];
-    const col = colorFor(r.totalReal);
-    return { Fecha:d, 'Total Real': Math.round(r.totalReal), Estado: col.label };
+    const total = totalRealDelDia(d);
+    const col = colorFor(total);
+    return { Fecha:d, 'Total Real': Math.round(total), Estado: col.label, Turnos: turnosDelDia(d).length };
   });
-
   const byMonth = {};
   dates.forEach(d=>{
     const key = d.slice(0,7);
     byMonth[key] = byMonth[key] || [];
-    byMonth[key].push(historial[d].totalReal);
+    byMonth[key].push(totalRealDelDia(d));
   });
   const monthly = Object.keys(byMonth).sort().map(k=>{
     const vals = byMonth[k];
     const total = vals.reduce((a,b)=>a+b,0);
-    const prom = total/vals.length;
-    return { Mes:k, 'Total del mes':Math.round(total), 'Promedio diario':Math.round(prom), 'Días registrados':vals.length };
+    return { Mes:k, 'Total del mes':Math.round(total), 'Promedio diario':Math.round(total/vals.length), 'Días registrados':vals.length };
   });
-
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(daily), 'Control diario');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(monthly), 'Cortes mensuales');
   XLSX.writeFile(wb, 'control_de_economia.xlsx');
 }
-
+ 
 /* ============================================================
    VISTA RESUMEN MENSUAL
    ============================================================ */
-function monthLabel(key){
-  const [y,m] = key.split('-').map(Number);
-  return MESES[m-1] + ' ' + y;
-}
-
+function monthLabel(key){ const [y,m] = key.split('-').map(Number); return MESES[m-1] + ' ' + y; }
+ 
 function buildMonthlySummary(){
   const byMonth = {};
   Object.keys(historial).forEach(dateKey=>{
+    if (turnosDelDia(dateKey).length === 0) return;
     const monthKey = dateKey.slice(0,7);
-    const r = historial[dateKey];
     if (!byMonth[monthKey]) byMonth[monthKey] = { total:0, verde:0, amarillo:0, naranja:0, rojo:0, dias:0 };
     const b = byMonth[monthKey];
-    b.total += r.totalReal;
-    b.dias += 1;
-    b[colorFor(r.totalReal).name] += 1;
+    const total = totalRealDelDia(dateKey);
+    b.total += total; b.dias += 1; b[colorFor(total).name] += 1;
   });
   return Object.keys(byMonth).sort().reverse().map(k=>({ key:k, ...byMonth[k] }));
 }
-
+ 
 function renderResumenMensual(){
   const meses = buildMonthlySummary();
   const mobileEl = document.getElementById('resumen-mobile');
   const desktopEl = document.getElementById('resumen-desktop');
-
   if (meses.length === 0){
     mobileEl.innerHTML = '<div class="empty">Todavía no hay meses con turnos guardados.</div>';
     desktopEl.innerHTML = mobileEl.innerHTML;
     return;
   }
-
   mobileEl.innerHTML = meses.map(m => `
     <div class="month-card">
-      <div class="mc-head">
-        <span class="mes">${monthLabel(m.key)}</span>
-        <span class="total">${money(m.total)}</span>
-      </div>
+      <div class="mc-head"><span class="mes">${monthLabel(m.key)}</span><span class="total">${money(m.total)}</span></div>
       <div class="mc-counts">
         <span><i style="background:var(--verde)"></i> ${m.verde} buenos</span>
         <span><i style="background:var(--amarillo)"></i> ${m.amarillo} normales</span>
@@ -1000,156 +1225,78 @@ function renderResumenMensual(){
         <span>${m.dias} días registrados</span>
       </div>
     </div>`).join('');
-
-  desktopEl.innerHTML = `<table class="hist-table">
-    <thead><tr>
-      <th>Mes</th><th>Total recaudado</th><th>Buenos</th><th>Normales</th><th>Flojos</th><th>Malos</th><th>Días registrados</th>
-    </tr></thead>
-    <tbody>${meses.map(m=>`<tr>
-      <td>${monthLabel(m.key)}</td>
-      <td>${money(m.total)}</td>
+  desktopEl.innerHTML = `<table class="hist-table"><thead><tr><th>Mes</th><th>Total recaudado</th><th>Buenos</th><th>Normales</th><th>Flojos</th><th>Malos</th><th>Días registrados</th></tr></thead>
+    <tbody>${meses.map(m=>`<tr><td>${monthLabel(m.key)}</td><td>${money(m.total)}</td>
       <td><span class="status-dot" style="background:var(--verde)"></span> ${m.verde}</td>
       <td><span class="status-dot" style="background:var(--amarillo)"></span> ${m.amarillo}</td>
       <td><span class="status-dot" style="background:var(--naranja)"></span> ${m.naranja}</td>
       <td><span class="status-dot" style="background:var(--rojo)"></span> ${m.rojo}</td>
-      <td>${m.dias}</td>
-    </tr>`).join('')}</tbody>
-  </table>`;
+      <td>${m.dias}</td></tr>`).join('')}</tbody></table>`;
 }
-
+ 
 /* ============================================================
-   AUTENTICACION (usuario/contraseña + recordar + huella)
+   MENU DE OPCIONES / CONFIGURACION / CAMBIO DE CONTRASEÑA
    ============================================================ */
-const AUTH_KEY = 'auth-config';
-const REMEMBER_KEY = 'auth-remember-flag';
-
-async function sha256(text){
-  const enc = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+function toggleDropdown(){ document.getElementById('dropdown-menu').style.display = document.getElementById('dropdown-menu').style.display==='block' ? 'none' : 'block'; }
+document.addEventListener('click', (e)=>{
+  const menu = document.getElementById('dropdown-menu');
+  const btn = document.getElementById('btn-menu-dots');
+  if (menu && btn && !menu.contains(e.target) && e.target !== btn){ menu.style.display = 'none'; }
+});
+ 
+function openConfigModal(){
+  document.getElementById('config-dia-descanso').value = settings.diaDescanso ?? '';
+  document.getElementById('modal-config').classList.add('open');
 }
-
-async function getAuthConfig(){
-  const raw = await storageGet(AUTH_KEY);
-  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+async function saveConfig(){
+  settings.diaDescanso = document.getElementById('config-dia-descanso').value;
+  await saveSettings();
+  closeModal('modal-config');
+  renderEconomia();
 }
-async function setAuthConfig(cfg){ await storageSet(AUTH_KEY, JSON.stringify(cfg)); }
-
-async function biometricAvailable(){
+ 
+function openChangePassModal(){
+  document.getElementById('cp-cedula').value = '';
+  document.getElementById('cp-pass1').value = '';
+  document.getElementById('cp-pass2').value = '';
+  document.getElementById('cp-error').style.display = 'none';
+  document.getElementById('modal-change-pass').classList.add('open');
+}
+async function saveChangePass(){
+  const cedula = document.getElementById('cp-cedula').value.trim();
+  const p1 = document.getElementById('cp-pass1').value;
+  const p2 = document.getElementById('cp-pass2').value;
+  const errEl = document.getElementById('cp-error');
+  if (cedula !== currentUser.cedula){ errEl.textContent = 'La cédula no coincide con la sesión activa.'; errEl.style.display='block'; return; }
+  if (!p1 || p1 !== p2){ errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display='block'; return; }
+  const users = await getUsers();
+  users[currentUser.cedula].passHash = await sha256(p1);
+  await saveUsers(users);
+  closeModal('modal-change-pass');
+  alert('Contraseña actualizada.');
+}
+ 
+/* ============================================================
+   PWA
+   ============================================================ */
+function setupPWA(){
+  const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23201D1A'/%3E%3Cg fill='%230F5C5C'%3E%3Crect x='0' y='0' width='20' height='20'/%3E%3Crect x='40' y='0' width='20' height='20'/%3E%3Crect x='80' y='0' width='20' height='20'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Crect x='60' y='20' width='20' height='20'/%3E%3Crect x='0' y='40' width='20' height='20'/%3E%3Crect x='40' y='40' width='20' height='20'/%3E%3Crect x='80' y='40' width='20' height='20'/%3E%3Crect x='20' y='60' width='20' height='20'/%3E%3Crect x='60' y='60' width='20' height='20'/%3E%3Crect x='0' y='80' width='20' height='20'/%3E%3Crect x='40' y='80' width='20' height='20'/%3E%3Crect x='80' y='80' width='20' height='20'/%3E%3C/g%3E%3C/svg%3E";
+  const manifest = { name:"Liquidación de Viajes", short_name:"Liquidación", start_url:".", display:"standalone", background_color:"#F7F4EC", theme_color:"#0F5C5C", icons:[{src:icon, sizes:"any", type:"image/svg+xml"}] };
   try{
-    return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
-  }catch(e){ return false; }
-}
-
-async function registerBiometric(username){
-  try{
-    const cred = await navigator.credentials.create({
-      publicKey:{
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp:{ name:'Liquidación de Viajes' },
-        user:{ id: crypto.getRandomValues(new Uint8Array(16)), name: username, displayName: username },
-        pubKeyCredParams:[{alg:-7,type:'public-key'},{alg:-257,type:'public-key'}],
-        authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
-        timeout:60000
-      }
-    });
-    return cred ? btoa(String.fromCharCode(...new Uint8Array(cred.rawId))) : null;
-  }catch(e){ return null; }
-}
-
-async function loginWithBiometric(credIdBase64){
-  try{
-    const rawId = Uint8Array.from(atob(credIdBase64), c=>c.charCodeAt(0));
-    const assertion = await navigator.credentials.get({
-      publicKey:{
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        allowCredentials:[{ id: rawId, type:'public-key', transports:['internal'] }],
-        userVerification:'required',
-        timeout:60000
-      }
-    });
-    return !!assertion;
-  }catch(e){ return false; }
-}
-
-function showLock(view){
-  document.getElementById('lock-screen').style.display = 'flex';
-  document.getElementById('lock-setup').style.display = view === 'setup' ? 'block' : 'none';
-  document.getElementById('lock-login').style.display = view === 'login' ? 'block' : 'none';
-}
-function hideLock(){ document.getElementById('lock-screen').style.display = 'none'; }
-
-async function showLoginScreen(cfg){
-  showLock('login');
-  document.getElementById('login-user').value = '';
-  document.getElementById('login-pass').value = '';
-  document.getElementById('login-error').style.display = 'none';
-  const bioOk = cfg.bioCredId && await biometricAvailable();
-  document.getElementById('bio-divider').style.display = bioOk ? 'flex' : 'none';
-  document.getElementById('btn-bio-login').style.display = bioOk ? 'block' : 'none';
-}
-
-async function handleSetupSubmit(){
-  const user = document.getElementById('setup-user').value.trim();
-  const pass = document.getElementById('setup-pass').value;
-  const pass2 = document.getElementById('setup-pass2').value;
-  const errEl = document.getElementById('setup-error');
-  if (!user || !pass){ errEl.textContent = 'Completá usuario y contraseña.'; errEl.style.display='block'; return; }
-  if (pass !== pass2){ errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display='block'; return; }
-
-  const cfg = { username: user, passHash: await sha256(pass), bioCredId: null };
-  if (document.getElementById('setup-bio').checked && await biometricAvailable()){
-    const credId = await registerBiometric(user);
-    if (credId) cfg.bioCredId = credId;
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+  }catch(e){}
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+    const swCode = `self.addEventListener('install', e => self.skipWaiting());
+      self.addEventListener('activate', e => self.clients.claim());
+      self.addEventListener('fetch', e => {});`;
+    try{
+      const swBlob = new Blob([swCode], {type:'text/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+    }catch(e){}
   }
-  await setAuthConfig(cfg);
-  await storageSet(REMEMBER_KEY, 'yes');
-  hideLock();
-  appInit();
 }
-
-async function handleLoginSubmit(){
-  const cfg = await getAuthConfig();
-  const user = document.getElementById('login-user').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
-  const passHash = await sha256(pass);
-  if (user !== cfg.username || passHash !== cfg.passHash){
-    errEl.textContent = 'Usuario o contraseña incorrectos.'; errEl.style.display = 'block'; return;
-  }
-  await storageSet(REMEMBER_KEY, document.getElementById('login-remember').checked ? 'yes' : 'no');
-  hideLock();
-  appInit();
-}
-
-async function handleBioLogin(){
-  const cfg = await getAuthConfig();
-  const errEl = document.getElementById('login-error');
-  if (!cfg || !cfg.bioCredId){ return; }
-  const ok = await loginWithBiometric(cfg.bioCredId);
-  if (ok){ hideLock(); appInit(); }
-  else { errEl.textContent = 'No se pudo validar la huella. Probá con la contraseña.'; errEl.style.display = 'block'; }
-}
-
-async function logout(){
-  const ok = confirm('¿Cerrar sesión? Vas a tener que ingresar tu usuario y contraseña de nuevo.');
-  if (!ok) return;
-  await storageSet(REMEMBER_KEY, 'no');
-  location.reload();
-}
-
-async function authGate(){
-  const cfg = await getAuthConfig();
-  if (!cfg){
-    showLock('setup');
-    document.getElementById('setup-bio').parentElement.style.display = (await biometricAvailable()) ? 'flex' : 'none';
-    return;
-  }
-  const remembered = (await storageGet(REMEMBER_KEY)) === 'yes';
-  if (remembered){ hideLock(); appInit(); }
-  else { await showLoginScreen(cfg); }
-}
-
+ 
 /* ============================================================
    NAVEGACION
    ============================================================ */
@@ -1161,41 +1308,7 @@ function switchView(name){
   if (name === 'historial') renderHistorial();
   if (name === 'resumen') renderResumenMensual();
 }
-
-/* ============================================================
-   PWA: manifest e instalación
-   ============================================================ */
-function setupPWA(){
-  const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23201D1A'/%3E%3Cg fill='%230F5C5C'%3E%3Crect x='0' y='0' width='20' height='20'/%3E%3Crect x='40' y='0' width='20' height='20'/%3E%3Crect x='80' y='0' width='20' height='20'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Crect x='60' y='20' width='20' height='20'/%3E%3Crect x='0' y='40' width='20' height='20'/%3E%3Crect x='40' y='40' width='20' height='20'/%3E%3Crect x='80' y='40' width='20' height='20'/%3E%3Crect x='20' y='60' width='20' height='20'/%3E%3Crect x='60' y='60' width='20' height='20'/%3E%3Crect x='0' y='80' width='20' height='20'/%3E%3Crect x='40' y='80' width='20' height='20'/%3E%3Crect x='80' y='80' width='20' height='20'/%3E%3C/g%3E%3C/svg%3E";
-  const manifest = {
-    name: "Liquidación de Viajes",
-    short_name: "Liquidación",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#F7F4EC",
-    theme_color: "#0F5C5C",
-    icons: [
-      { src: icon, sizes: "any", type: "image/svg+xml" }
-    ]
-  };
-  try{
-    const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-    document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
-  }catch(e){ /* si falla, la app sigue funcionando igual sin manifest */ }
-
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
-    const swCode = `
-      self.addEventListener('install', e => self.skipWaiting());
-      self.addEventListener('activate', e => self.clients.claim());
-      self.addEventListener('fetch', e => {});
-    `;
-    try{
-      const swBlob = new Blob([swCode], {type:'text/javascript'});
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
-    }catch(e){ /* silencioso: sin service worker la app sigue funcionando online */ }
-  }
-}
-
+ 
 /* ============================================================
    INIT
    ============================================================ */
@@ -1203,56 +1316,81 @@ async function appInit(){
   setupPWA();
   document.getElementById('today-pill').textContent = new Date().toLocaleDateString('es-UY');
   await loadHistorial();
-
-  document.getElementById('f-fecha').value = todayISO();
-
-  formIds.forEach(id=>{
+  await loadSettings();
+ 
+  formNumericIds.forEach(id=> onlyDigits(document.getElementById('f-'+id)) );
+  onlyDigits(document.getElementById('f-coche'));
+ 
+  const draftRaw = await storageGet(keyDraft());
+  let draft = null;
+  try{ draft = draftRaw ? JSON.parse(draftRaw) : null; }catch(e){ draft = null; }
+  if (draft){ fillForm(draft); } else { clearForm(); }
+ 
+  formNumericIds.concat(['fecha']).forEach(id=>{
     const el = document.getElementById('f-'+id);
     if (el) el.addEventListener('input', refreshFormComputed);
   });
-  document.getElementById('f-complementada').addEventListener('change', refreshFormComputed);
+  ['complementada'].forEach(id=> document.getElementById('f-'+id).addEventListener('change', refreshFormComputed) );
   document.getElementById('f-coche').addEventListener('input', refreshFormComputed);
-
+  document.getElementById('f-horaEntrada').addEventListener('input', refreshFormComputed);
+  document.getElementById('f-horaSalida').addEventListener('input', refreshFormComputed);
+ 
   document.getElementById('btn-guardar').addEventListener('click', guardarTurno);
   document.getElementById('btn-nuevo').addEventListener('click', ()=>{
     if (confirm('¿Vaciar el formulario para empezar un turno nuevo?')) clearForm();
   });
   document.getElementById('btn-export-hist').addEventListener('click', exportHistorialExcel);
   document.getElementById('btn-export-eco').addEventListener('click', exportEconomiaExcel);
-  document.getElementById('btn-import-hist').addEventListener('click', ()=>{
-    document.getElementById('input-import-hist').click();
-  });
+  document.getElementById('btn-import-hist').addEventListener('click', ()=> document.getElementById('input-import-hist').click());
   document.getElementById('input-import-hist').addEventListener('change', (e)=>{
     if (e.target.files[0]) importHistorialExcel(e.target.files[0]);
     e.target.value = '';
   });
-  document.getElementById('btn-logout').addEventListener('click', logout);
-
-  document.getElementById('mes-prev').addEventListener('click', ()=>{
-    currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()-1, 1);
-    renderEconomia();
+ 
+  document.getElementById('mes-prev').addEventListener('click', ()=>{ currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()-1, 1); renderEconomia(); });
+  document.getElementById('mes-next').addEventListener('click', ()=>{ currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()+1, 1); renderEconomia(); });
+ 
+  document.querySelectorAll('#navbar button').forEach(b=> b.addEventListener('click', ()=>switchView(b.dataset.view)) );
+ 
+  document.getElementById('btn-menu-dots').addEventListener('click', (e)=>{ e.stopPropagation(); toggleDropdown(); });
+  document.getElementById('menu-config').addEventListener('click', ()=>{ toggleDropdown(); openConfigModal(); });
+  document.getElementById('menu-change-pass').addEventListener('click', ()=>{ toggleDropdown(); openChangePassModal(); });
+  document.getElementById('menu-logout').addEventListener('click', ()=>{ toggleDropdown(); logout(); });
+  document.getElementById('btn-config-cancel').addEventListener('click', ()=>closeModal('modal-config'));
+  document.getElementById('btn-config-save').addEventListener('click', saveConfig);
+  document.getElementById('btn-cp-cancel').addEventListener('click', ()=>closeModal('modal-change-pass'));
+  document.getElementById('btn-cp-save').addEventListener('click', saveChangePass);
+  document.getElementById('btn-dd-close').addEventListener('click', ()=>closeModal('modal-day-detail'));
+  document.getElementById('btn-dd-add').addEventListener('click', ()=>{
+    const day = document.getElementById('modal-day-detail').dataset.day;
+    closeModal('modal-day-detail');
+    clearForm(day);
+    switchView('turno');
   });
-  document.getElementById('mes-next').addEventListener('click', ()=>{
-    currentMonthCursor = new Date(currentMonthCursor.getFullYear(), currentMonthCursor.getMonth()+1, 1);
-    renderEconomia();
-  });
-
-  document.querySelectorAll('#navbar button').forEach(b=>{
-    b.addEventListener('click', ()=>switchView(b.dataset.view));
-  });
-
+ 
   refreshFormComputed();
   renderHistorial();
 }
-
+ 
+document.querySelectorAll('.pass-toggle').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const input = document.getElementById(btn.dataset.toggle);
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    btn.textContent = showing ? 'Mostrar' : 'Ocultar';
+  });
+});
+ 
 function init(){
   document.getElementById('btn-setup').addEventListener('click', handleSetupSubmit);
   document.getElementById('btn-login').addEventListener('click', handleLoginSubmit);
   document.getElementById('btn-bio-login').addEventListener('click', handleBioLogin);
+  document.getElementById('btn-go-login').addEventListener('click', ()=>showLoginScreen(''));
+  document.getElementById('btn-go-setup').addEventListener('click', async ()=>{ showLock('setup'); await refreshSetupBioVisibility(); });
   authGate();
 }
-
 init();
 </script>
 </body>
 </html>
+ 
