@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liquidación de Viajes</title>
+<title>LIBER</title>
 <meta name="theme-color" content="#0F5C5C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Liquidación">
+<meta name="apple-mobile-web-app-title" content="LIBER">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23201D1A'/%3E%3Cg fill='%230F5C5C'%3E%3Crect x='0' y='0' width='20' height='20'/%3E%3Crect x='40' y='0' width='20' height='20'/%3E%3Crect x='80' y='0' width='20' height='20'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Crect x='60' y='20' width='20' height='20'/%3E%3Crect x='0' y='40' width='20' height='20'/%3E%3Crect x='40' y='40' width='20' height='20'/%3E%3Crect x='80' y='40' width='20' height='20'/%3E%3Crect x='20' y='60' width='20' height='20'/%3E%3Crect x='60' y='60' width='20' height='20'/%3E%3Crect x='0' y='80' width='20' height='20'/%3E%3Crect x='40' y='80' width='20' height='20'/%3E%3Crect x='80' y='80' width='20' height='20'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="manifest" id="pwa-manifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,6 +134,23 @@
   .analysis-text{font-size:13px; line-height:1.6; color:var(--ink); background:var(--petrol-soft); border-left:3px solid var(--petrol); padding:12px 14px; border-radius:6px;}
   canvas{max-width:100%;}
 
+  /* ---------- Modo Explicativo ---------- */
+  .exp-caption{display:none; font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin:-4px 0 14px; background:var(--petrol-soft); border-left:3px solid var(--petrol); padding:8px 10px; border-radius:6px;}
+  #view-turno.modo-explicativo .exp-caption{display:block;}
+  #view-turno.modo-explicativo [data-exp-step]{display:none;}
+  #view-turno.modo-explicativo [data-exp-step].exp-active{display:block;}
+  #view-turno.modo-explicativo #turno-final-actions{display:none;}
+  #view-turno.modo-explicativo #turno-final-actions.exp-show{display:flex;}
+  .exp-nav{background:var(--petrol-soft); border-radius:10px; padding:12px 14px; margin-bottom:14px; text-align:center;}
+  .exp-step-label{font-size:11.5px; font-weight:700; color:var(--petrol-dark); text-transform:uppercase; letter-spacing:0.04em;}
+
+  /* ---------- Aviso de error (no bloqueante) ---------- */
+  #error-banner{
+    position:fixed; top:0; left:0; right:0; background:var(--rojo); color:#fff; font-size:12.5px;
+    padding:10px 16px; text-align:center; z-index:200; display:none; font-family:var(--sans);
+  }
+  #error-banner button{background:rgba(255,255,255,0.2); border:none; color:#fff; border-radius:5px; padding:3px 9px; font-size:11px; margin-left:10px; cursor:pointer;}
+
   .month-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);}
   .month-card .mc-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
   .month-card .mc-head .mes{font-weight:800; font-size:14px;}
@@ -189,13 +206,15 @@
 </style>
 </head>
 <body>
+<div id="error-banner">Algo no funcionó como esperaba, pero tus datos están a salvo. <button onclick="document.getElementById('error-banner').style.display='none'">Cerrar</button></div>
 
 <div class="lock-screen" id="lock-screen">
   <div class="lock-card">
     <div class="lock-brand">
       <div class="brand-mark" style="width:28px;height:28px;"></div>
-      <h1>Liquidación de Viajes</h1>
+      <h1>LIBER</h1>
     </div>
+    <p class="lock-sub" style="margin-top:-14px;">Liquidación Inteligente de Balance Económico del Rodado</p>
 
     <!-- Alta de usuario -->
     <div id="lock-setup" style="display:none;">
@@ -257,12 +276,14 @@
         <option value="vespertino-nocturno">Vespertino-Nocturno</option>
       </select>
     </div>
+    <label class="lock-check"><input type="checkbox" id="pre-modo-explicativo"> Usar Modo Explicativo (te guía paso a paso)</label>
     <button class="btn btn-block" id="btn-pre-continuar">Continuar</button>
   </div>
 </div>
 
 <!-- Menú de opciones (tres puntitos) -->
 <div class="dropdown-menu" id="dropdown-menu">
+  <button id="menu-toggle-explicativo">💡 Activar Modo Explicativo</button>
   <button id="menu-config">⚙️ Configuración</button>
   <button id="menu-change-pass">🔑 Cambiar contraseña</button>
   <button id="menu-logout" class="danger">⎋ Cerrar sesión</button>
@@ -323,7 +344,7 @@
     <div class="brand">
       <div class="brand-mark"></div>
       <div class="brand-text">
-        <h1>Liquidación de Viajes</h1>
+        <h1>LIBER</h1>
         <p id="coche-sub">COCHE Nº 2851 · REGISTRO PRIVADO</p>
       </div>
     </div>
@@ -345,35 +366,20 @@
     <section class="view active" id="view-turno">
       <h2 class="view-title">Liquidación del turno</h2>
 
-      <div class="card">
-        <h3><span class="dot"></span>Datos del turno</h3>
+      <div class="card" data-exp-step="1">
+        <h3><span class="dot"></span>Kilómetros y total del ticket</h3>
+        <p class="exp-caption">Empezamos por lo que sale directo del taxímetro: los kilómetros del turno y el total facturado.</p>
         <div class="grid grid-3">
-          <div class="field"><label>Fecha</label><input type="date" id="f-fecha"></div>
-          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" inputmode="numeric"></div>
           <div class="field"><label>Km entrada</label><input type="text" id="f-kmEntrada" inputmode="numeric"></div>
-        </div>
-        <div class="grid grid-3" style="margin-top:12px;">
           <div class="field"><label>Km salida</label><input type="text" id="f-kmSalida" inputmode="numeric"></div>
           <div class="field"><label>Km total</label><input type="text" id="f-kmTotal" class="auto" readonly></div>
-          <div class="field"><label>Total facturado (UYU)</label><input type="text" id="f-total" inputmode="numeric"></div>
         </div>
-        <div class="grid grid-2" style="margin-top:12px;">
-          <div class="field"><label>Hora entrada (opcional)</label><input type="time" id="f-horaEntrada"></div>
-          <div class="field"><label>Hora salida (opcional)</label><input type="time" id="f-horaSalida"></div>
-        </div>
-        <div class="field" style="margin-top:12px;">
-          <label>Franja del turno</label>
-          <select id="f-franja">
-            <option value="matutino-vespertino">Matutino-Vespertino</option>
-            <option value="vespertino-nocturno">Vespertino-Nocturno</option>
-          </select>
-        </div>
-        <label class="checkline"><input type="checkbox" id="f-complementada"> Factura complementada</label>
-        <p class="hint">Coche distinto al habitual: Aporte Leyes $0 y Otros = 4% del total. Coche habitual + complementada: además el Salario se completa hasta $1040 si quedaba por debajo.</p>
+        <div class="field" style="margin-top:12px;"><label>Total facturado (UYU)</label><input type="text" id="f-total" inputmode="numeric"></div>
       </div>
 
-      <div class="card">
+      <div class="card" data-exp-step="2">
         <h3><span class="dot"></span>Gastos del móvil (UYU)</h3>
+        <p class="exp-caption">Con el Total ya cargado, el Salario se calcula solo. El resto lo cargás vos, según lo que gastaste.</p>
         <div class="grid grid-3">
           <div class="field"><label>Salario (29%)</label><input type="text" id="f-salario" class="auto" readonly></div>
           <div class="field"><label>Viático</label><input type="text" id="f-viatico" inputmode="numeric"></div>
@@ -387,22 +393,31 @@
         <div class="grid grid-3" style="margin-top:12px;">
           <div class="field"><label>Otros</label><input type="text" id="f-otros" inputmode="numeric"></div>
           <div class="field"><label>Gastos (total)</label><input type="text" id="f-gastos" class="auto" readonly></div>
-          <div class="field"><label>Líquido</label><input type="text" id="f-liquido" class="auto" readonly></div>
+          <div class="field"><label>Hora entrada (opcional)</label><input type="time" id="f-horaEntrada"></div>
         </div>
+        <div class="field" style="margin-top:12px;"><label>Hora salida (opcional)</label><input type="time" id="f-horaSalida"></div>
       </div>
 
-      <div class="card">
+      <div class="card" data-exp-step="3">
         <h3><span class="dot"></span>Resultado del turno (UYU)</h3>
+        <p class="exp-caption">Estos números ya salen solos, a partir de lo que cargaste antes.</p>
         <div class="grid grid-3">
+          <div class="field"><label>Líquido</label><input type="text" id="f-liquido" class="auto" readonly></div>
           <div class="field"><label>Aporte Leyes</label><input type="text" id="f-aporteLeyes" class="auto" readonly></div>
           <div class="field"><label>Sub Total</label><input type="text" id="f-subTotal" class="auto" readonly></div>
-          <div class="field"><label>H13</label><input type="text" id="f-h13" inputmode="numeric"></div>
         </div>
         <div class="grid grid-3" style="margin-top:12px;">
+          <div class="field"><label>H13</label><input type="text" id="f-h13" inputmode="numeric"></div>
           <div class="field"><label>Tarjeta de créd.</label><input type="text" id="f-tarjeta" inputmode="numeric"></div>
           <div class="field"><label>TOTAL final</label><input type="text" id="f-totalFinal" class="auto" readonly></div>
-          <div class="field"><label>Efectivo en mano</label><input type="text" id="f-efectivo" inputmode="numeric"></div>
         </div>
+        <p class="exp-caption" id="f-notaSigno" style="margin-top:10px;"></p>
+      </div>
+
+      <div class="card" data-exp-step="4">
+        <h3><span class="dot"></span>Efectivo y cierre (UYU)</h3>
+        <p class="exp-caption">Por último, lo que te quedó en el bolsillo. Con esto se arma el Total Real de hoy.</p>
+        <div class="field"><label>Efectivo en mano</label><input type="text" id="f-efectivo" inputmode="numeric"></div>
         <div class="result-big" style="margin-top:14px;">
           <span class="label">Total Real</span>
           <span class="value" id="f-totalReal">$U 0</span>
@@ -410,7 +425,32 @@
         <p class="hint" id="f-gananciaHora" style="display:none; margin-top:10px;"></p>
       </div>
 
-      <div class="actions-row">
+      <div class="card" data-exp-step="5">
+        <h3><span class="dot"></span>Datos del móvil y del turno</h3>
+        <p class="exp-caption">Por último, confirmá con qué auto trabajaste y la fecha — esto es lo que estaba al pie de la planilla de papel.</p>
+        <div class="grid grid-3">
+          <div class="field"><label>Coche Nº</label><input type="text" id="f-coche" inputmode="numeric"></div>
+          <div class="field"><label>Fecha</label><input type="date" id="f-fecha"></div>
+          <div class="field"><label>Franja del turno</label>
+            <select id="f-franja">
+              <option value="matutino-vespertino">Matutino-Vespertino</option>
+              <option value="vespertino-nocturno">Vespertino-Nocturno</option>
+            </select>
+          </div>
+        </div>
+        <label class="checkline"><input type="checkbox" id="f-complementada"> Factura complementada</label>
+        <p class="hint">Coche distinto al habitual: Aporte Leyes $0 y Otros = 4% del total. Coche habitual + complementada: además el Salario se completa hasta $1040 si quedaba por debajo.</p>
+      </div>
+
+      <div class="exp-nav" id="exp-nav" style="display:none;">
+        <span class="exp-step-label" id="exp-step-label">Paso 1 de 5</span>
+        <div class="actions-row" style="margin-top:8px;">
+          <button class="btn secondary" id="btn-exp-back">Atrás</button>
+          <button class="btn" id="btn-exp-next">Siguiente</button>
+        </div>
+      </div>
+
+      <div class="actions-row" id="turno-final-actions">
         <button class="btn" id="btn-guardar">Guardar turno</button>
         <button class="btn secondary" id="btn-nuevo">Empezar turno nuevo</button>
       </div>
@@ -483,6 +523,22 @@
 </div>
 
 <script>
+/* ============================================================
+   MANEJO GLOBAL DE ERRORES (evita pantallas en blanco)
+   ============================================================ */
+function showErrorBanner(){
+  const el = document.getElementById('error-banner');
+  if (el) el.style.display = 'block';
+}
+window.addEventListener('error', (e)=>{
+  console.error('Error no controlado:', e.error || e.message);
+  showErrorBanner();
+});
+window.addEventListener('unhandledrejection', (e)=>{
+  console.error('Promesa rechazada sin controlar:', e.reason);
+  showErrorBanner();
+});
+
 /* ============================================================
    UTILIDADES GENERALES
    ============================================================ */
@@ -588,7 +644,7 @@ async function registerBiometric(username){
     const cred = await navigator.credentials.create({
       publicKey:{
         challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp:{ name:'Liquidación de Viajes' },
+        rp:{ name:'LIBER' },
         user:{ id: crypto.getRandomValues(new Uint8Array(16)), name: username, displayName: username },
         pubKeyCredParams:[{alg:-7,type:'public-key'},{alg:-257,type:'public-key'}],
         authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
@@ -716,6 +772,7 @@ async function showPreTurnoScreen(){
   document.getElementById('pre-coche-habitual').value = settings.cocheHabitual || '2851';
   document.getElementById('pre-dia-descanso').value = settings.diaDescanso ?? '';
   document.getElementById('pre-franja').value = sessionFranja;
+  document.getElementById('pre-modo-explicativo').checked = !!settings.modoExplicativo;
   document.getElementById('pre-turno-screen').style.display = 'flex';
   document.getElementById('app').classList.add('app-hidden');
 }
@@ -724,6 +781,7 @@ async function continueFromPreTurno(){
   settings.cocheHabitual = document.getElementById('pre-coche-habitual').value.trim() || '2851';
   settings.diaDescanso = document.getElementById('pre-dia-descanso').value;
   sessionFranja = document.getElementById('pre-franja').value;
+  settings.modoExplicativo = document.getElementById('pre-modo-explicativo').checked;
   await saveSettings();
   document.getElementById('pre-turno-screen').style.display = 'none';
   document.getElementById('app').classList.remove('app-hidden');
@@ -899,6 +957,13 @@ function refreshFormComputed(){
     gEl.textContent = `Duración del turno: ${c.horas.toFixed(1)} hs · Ganancia por hora: ${money(c.gananciaHora)}`;
   } else { gEl.style.display = 'none'; }
 
+  const notaEl = document.getElementById('f-notaSigno');
+  if (notaEl){
+    if (c.totalFinal > 0) notaEl.textContent = 'Como dio positivo, esa plata se la tenés que dar vos a la empresa.';
+    else if (c.totalFinal < 0) notaEl.textContent = 'Como dio negativo, esa plata te la tiene que dar la empresa a vos.';
+    else notaEl.textContent = 'Dio justo $U 0: no le debés nada a la empresa, ni ella a vos.';
+  }
+
   const otrosField = document.getElementById('f-otros');
   if (!c.esHabitual){
     otrosField.value = Math.round(c.otros);
@@ -933,6 +998,8 @@ function fillForm(input){
 
 function clearForm(dateKeyPrefill){
   editingTurno = null;
+  currentExpStep = 1;
+  if (document.getElementById('view-turno').classList.contains('modo-explicativo')) updateExpVisibility();
   fillForm({ fecha: dateKeyPrefill || todayISO(), coche: settings.cocheHabitual || '2851', franja: sessionFranja });
   clearDraft();
 }
@@ -947,17 +1014,25 @@ function loadTurnoIntoForm(dateKey, id){
 
 async function guardarTurno(){
   const input = getFormInput();
+  const wasEditingBefore = editingTurno ? { ...editingTurno } : null;
+  const backupNewDay = historial[input.fecha] ? [...historial[input.fecha]] : undefined;
+  const backupOldDay = (wasEditingBefore && wasEditingBefore.dateKey !== input.fecha && historial[wasEditingBefore.dateKey])
+    ? [...historial[wasEditingBefore.dateKey]] : undefined;
+
   guardarOActualizarTurno(input.fecha, input);
   const ok = await saveHistorial();
-  await clearDraft();
   if (ok){
-    const wasEditing = !!editingTurno;
+    await clearDraft();
     editingTurno = null;
     renderHistorial();
     renderEconomia();
-    alert(wasEditing ? 'Turno actualizado.' : 'Turno guardado para el ' + input.fecha + '.');
+    alert(wasEditingBefore ? 'Turno actualizado.' : 'Turno guardado para el ' + input.fecha + '.');
   } else {
-    alert('No se pudo guardar el turno. Intentá de nuevo.');
+    if (backupNewDay){ historial[input.fecha] = backupNewDay; } else { delete historial[input.fecha]; }
+    if (wasEditingBefore && wasEditingBefore.dateKey !== input.fecha){
+      if (backupOldDay){ historial[wasEditingBefore.dateKey] = backupOldDay; } else { delete historial[wasEditingBefore.dateKey]; }
+    }
+    alert('No se pudo guardar el turno. Tus datos siguen en la planilla — probá de nuevo antes de salir.');
   }
 }
 
@@ -1049,11 +1124,18 @@ function openDayDetail(dateKey){
   list.querySelectorAll('[data-del-id]').forEach(b=>b.addEventListener('click', async ()=>{
     const ok = confirm('¿Eliminar este turno? No se puede deshacer.');
     if (!ok) return;
-    const arr = historial[b.dataset.delDay] || [];
+    const dayKey = b.dataset.delDay;
+    const backup = historial[dayKey] ? [...historial[dayKey]] : undefined;
+    const arr = historial[dayKey] || [];
     const idx = arr.findIndex(x=>x.id===b.dataset.delId);
     if (idx>=0) arr.splice(idx,1);
-    if (arr.length===0) delete historial[b.dataset.delDay];
-    await saveHistorial();
+    if (arr.length===0) delete historial[dayKey]; else historial[dayKey] = arr;
+    const saved = await saveHistorial();
+    if (!saved){
+      if (backup){ historial[dayKey] = backup; } else { delete historial[dayKey]; }
+      alert('No se pudo eliminar el turno. Probá de nuevo.');
+      return;
+    }
     renderHistorial(); renderEconomia();
     openDayDetail(dateKey);
   }));
@@ -1061,6 +1143,7 @@ function openDayDetail(dateKey){
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
 function exportHistorialExcel(){
+  if (typeof XLSX === 'undefined'){ alert('No se pudo cargar la herramienta de Excel (revisá tu conexión) e intentá de nuevo.'); return; }
   const dates = Object.keys(historial).sort();
   const rows = [];
   dates.forEach(d=>{
@@ -1087,6 +1170,7 @@ function exportHistorialExcel(){
 }
 
 function importHistorialExcel(file){
+  if (typeof XLSX === 'undefined'){ alert('No se pudo cargar la herramienta de Excel (revisá tu conexión) e intentá de nuevo.'); return; }
   const reader = new FileReader();
   reader.onload = async (e) => {
     try{
@@ -1097,6 +1181,7 @@ function importHistorialExcel(file){
       const ok = confirm(`Se encontraron ${rows.length} turnos en el archivo. Se van a agregar a tu historial. ¿Continuar?`);
       if (!ok) return;
 
+      const backupHistorial = JSON.parse(JSON.stringify(historial));
       let importados = 0;
       rows.forEach(row=>{
         const fecha = row['Fecha'];
@@ -1113,7 +1198,12 @@ function importHistorialExcel(file){
         guardarOActualizarTurno(fecha, input);
         importados++;
       });
-      await saveHistorial();
+      const saved = await saveHistorial();
+      if (!saved){
+        historial = backupHistorial;
+        alert('No se pudo guardar la restauración. Tu historial anterior no se modificó — probá de nuevo.');
+        return;
+      }
       renderHistorial(); renderEconomia();
       alert(`Se restauraron ${importados} turnos desde el Excel.`);
     }catch(err){
@@ -1173,17 +1263,26 @@ function renderEconomia(){
   const labels = monthValues.map(v=>v.day);
   const data = monthValues.map(v=>v.totalReal);
   const pointColors = monthValues.map(v=>v.color.hex);
-  const ctx = document.getElementById('chart-mes').getContext('2d');
-  if (chartMes) chartMes.destroy();
-  chartMes = new Chart(ctx, {
-    type:'line',
-    data:{ labels, datasets:[
-      { label:'Total Real', data, borderColor:'#0F5C5C', backgroundColor:'rgba(15,92,92,0.08)', pointBackgroundColor:pointColors, pointRadius:5, tension:0.25, fill:true },
-      { label:'Meta ($U1000)', data: labels.map(()=>1000), borderColor:'#B33A3A', borderDash:[6,5], pointRadius:0, fill:false }
-    ]},
-    options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter'}, boxWidth:12 } } },
-      scales:{ x:{ title:{display:true, text:'Día del mes'} }, y:{ beginAtZero:true, ticks:{ callback:v=>'$U'+v } } } }
-  });
+  try{
+    if (typeof Chart === 'undefined') throw new Error('Chart.js no está disponible (sin conexión)');
+    const ctx = document.getElementById('chart-mes').getContext('2d');
+    if (chartMes) chartMes.destroy();
+    chartMes = new Chart(ctx, {
+      type:'line',
+      data:{ labels, datasets:[
+        { label:'Total Real', data, borderColor:'#0F5C5C', backgroundColor:'rgba(15,92,92,0.08)', pointBackgroundColor:pointColors, pointRadius:5, tension:0.25, fill:true },
+        { label:'Meta ($U1000)', data: labels.map(()=>1000), borderColor:'#B33A3A', borderDash:[6,5], pointRadius:0, fill:false }
+      ]},
+      options:{ responsive:true, plugins:{ legend:{ position:'bottom', labels:{ font:{family:'Inter'}, boxWidth:12 } } },
+        scales:{ x:{ title:{display:true, text:'Día del mes'} }, y:{ beginAtZero:true, ticks:{ callback:v=>'$U'+v } } } }
+    });
+  }catch(e){
+    console.error('No se pudo dibujar el gráfico:', e);
+    const canvasEl = document.getElementById('chart-mes');
+    const existing = document.getElementById('chart-fallback-hint');
+    if (existing) existing.remove();
+    if (canvasEl) canvasEl.insertAdjacentHTML('afterend', '<p class="hint" id="chart-fallback-hint">No se pudo cargar el gráfico (revisá tu conexión). El resto de los datos del mes sigue disponible abajo.</p>');
+  }
 
   const vals = monthValues.map(v=>v.totalReal);
   const total = vals.reduce((a,b)=>a+b,0);
@@ -1236,6 +1335,7 @@ function renderEconomia(){
 }
 
 function exportEconomiaExcel(){
+  if (typeof XLSX === 'undefined'){ alert('No se pudo cargar la herramienta de Excel (revisá tu conexión) e intentá de nuevo.'); return; }
   const dates = Object.keys(historial).filter(d=>turnosDelDia(d).length>0).sort();
   if (dates.length === 0){ alert('No hay datos guardados todavía.'); return; }
   const daily = dates.map(d=>{
@@ -1354,7 +1454,7 @@ async function saveChangePass(){
    ============================================================ */
 function setupPWA(){
   const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23201D1A'/%3E%3Cg fill='%230F5C5C'%3E%3Crect x='0' y='0' width='20' height='20'/%3E%3Crect x='40' y='0' width='20' height='20'/%3E%3Crect x='80' y='0' width='20' height='20'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Crect x='60' y='20' width='20' height='20'/%3E%3Crect x='0' y='40' width='20' height='20'/%3E%3Crect x='40' y='40' width='20' height='20'/%3E%3Crect x='80' y='40' width='20' height='20'/%3E%3Crect x='20' y='60' width='20' height='20'/%3E%3Crect x='60' y='60' width='20' height='20'/%3E%3Crect x='0' y='80' width='20' height='20'/%3E%3Crect x='40' y='80' width='20' height='20'/%3E%3Crect x='80' y='80' width='20' height='20'/%3E%3C/g%3E%3C/svg%3E";
-  const manifest = { name:"Liquidación de Viajes", short_name:"Liquidación", start_url:".", display:"standalone", background_color:"#F7F4EC", theme_color:"#0F5C5C", icons:[{src:icon, sizes:"any", type:"image/svg+xml"}] };
+  const manifest = { name:"LIBER — Liquidación Inteligente de Balance Económico del Rodado", short_name:"LIBER", start_url:".", display:"standalone", background_color:"#F7F4EC", theme_color:"#0F5C5C", icons:[{src:icon, sizes:"any", type:"image/svg+xml"}] };
   try{
     const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
     document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
@@ -1371,21 +1471,58 @@ function setupPWA(){
 }
 
 /* ============================================================
+   MODO EXPLICATIVO
+   ============================================================ */
+const EXP_TOTAL_STEPS = 5;
+let currentExpStep = 1;
+
+function updateExpVisibility(){
+  document.querySelectorAll('#view-turno [data-exp-step]').forEach(el=>{
+    el.classList.toggle('exp-active', Number(el.dataset.expStep) === currentExpStep);
+  });
+  document.getElementById('exp-step-label').textContent = `Paso ${currentExpStep} de ${EXP_TOTAL_STEPS}`;
+  document.getElementById('btn-exp-back').disabled = currentExpStep === 1;
+  const isLast = currentExpStep === EXP_TOTAL_STEPS;
+  document.getElementById('btn-exp-next').style.display = isLast ? 'none' : 'inline-flex';
+  document.getElementById('turno-final-actions').classList.toggle('exp-show', isLast);
+}
+
+function applyExplicativoMode(){
+  const on = !!settings.modoExplicativo;
+  document.getElementById('view-turno').classList.toggle('modo-explicativo', on);
+  document.getElementById('exp-nav').style.display = on ? 'block' : 'none';
+  document.getElementById('menu-toggle-explicativo').textContent = on ? '💡 Desactivar Modo Explicativo' : '💡 Activar Modo Explicativo';
+  if (on){ currentExpStep = 1; updateExpVisibility(); }
+}
+
+async function toggleModoExplicativo(){
+  settings.modoExplicativo = !settings.modoExplicativo;
+  await saveSettings();
+  applyExplicativoMode();
+}
+
+/* ============================================================
    NAVEGACION
    ============================================================ */
 function switchView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   document.querySelectorAll('#navbar button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
-  if (name === 'economia') renderEconomia();
-  if (name === 'historial') renderHistorial();
-  if (name === 'resumen') renderResumenMensual();
+  try{
+    if (name === 'economia') renderEconomia();
+    if (name === 'historial') renderHistorial();
+    if (name === 'resumen') renderResumenMensual();
+  }catch(e){
+    console.error('Error al mostrar la vista ' + name + ':', e);
+    showErrorBanner();
+  }
 }
 
 /* ============================================================
    INIT
    ============================================================ */
 async function appInit(){
+ try{
   setupPWA();
   document.getElementById('today-pill').textContent = new Date().toLocaleDateString('es-UY');
   await loadHistorial();
@@ -1404,6 +1541,7 @@ async function appInit(){
     if (el) el.addEventListener('input', refreshFormComputed);
   });
   ['complementada'].forEach(id=> document.getElementById('f-'+id).addEventListener('change', refreshFormComputed) );
+  document.getElementById('f-franja').addEventListener('change', refreshFormComputed);
   document.getElementById('f-coche').addEventListener('input', refreshFormComputed);
   document.getElementById('f-horaEntrada').addEventListener('input', refreshFormComputed);
   document.getElementById('f-horaSalida').addEventListener('input', refreshFormComputed);
@@ -1426,9 +1564,12 @@ async function appInit(){
   document.querySelectorAll('#navbar button').forEach(b=> b.addEventListener('click', ()=>switchView(b.dataset.view)) );
 
   document.getElementById('btn-menu-dots').addEventListener('click', (e)=>{ e.stopPropagation(); toggleDropdown(); });
+  document.getElementById('menu-toggle-explicativo').addEventListener('click', ()=>{ toggleDropdown(); toggleModoExplicativo(); });
   document.getElementById('menu-config').addEventListener('click', ()=>{ toggleDropdown(); openConfigModal(); });
   document.getElementById('menu-change-pass').addEventListener('click', ()=>{ toggleDropdown(); openChangePassModal(); });
   document.getElementById('menu-logout').addEventListener('click', ()=>{ toggleDropdown(); logout(); });
+  document.getElementById('btn-exp-back').addEventListener('click', ()=>{ if (currentExpStep>1){ currentExpStep--; updateExpVisibility(); window.scrollTo(0,0); } });
+  document.getElementById('btn-exp-next').addEventListener('click', ()=>{ if (currentExpStep<EXP_TOTAL_STEPS){ currentExpStep++; updateExpVisibility(); window.scrollTo(0,0); } });
   document.getElementById('btn-config-cancel').addEventListener('click', ()=>closeModal('modal-config'));
   document.getElementById('btn-config-save').addEventListener('click', saveConfig);
   document.getElementById('btn-cp-cancel').addEventListener('click', ()=>closeModal('modal-change-pass'));
@@ -1443,6 +1584,12 @@ async function appInit(){
 
   refreshFormComputed();
   renderHistorial();
+  applyExplicativoMode();
+ }catch(e){
+  console.error('Error al iniciar la planilla:', e);
+  showErrorBanner();
+  document.getElementById('app').classList.remove('app-hidden');
+ }
 }
 
 document.querySelectorAll('.pass-toggle').forEach(btn=>{
@@ -1455,13 +1602,19 @@ document.querySelectorAll('.pass-toggle').forEach(btn=>{
 });
 
 function init(){
-  document.getElementById('btn-setup').addEventListener('click', handleSetupSubmit);
-  document.getElementById('btn-login').addEventListener('click', handleLoginSubmit);
-  document.getElementById('btn-bio-login').addEventListener('click', handleBioLogin);
-  document.getElementById('btn-go-login').addEventListener('click', ()=>showLoginScreen(''));
-  document.getElementById('btn-go-setup').addEventListener('click', async ()=>{ showLock('setup'); await refreshSetupBioVisibility(); });
-  document.getElementById('btn-pre-continuar').addEventListener('click', continueFromPreTurno);
-  authGate();
+  try{
+    document.getElementById('btn-setup').addEventListener('click', handleSetupSubmit);
+    document.getElementById('btn-login').addEventListener('click', handleLoginSubmit);
+    document.getElementById('btn-bio-login').addEventListener('click', handleBioLogin);
+    document.getElementById('btn-go-login').addEventListener('click', ()=>showLoginScreen(''));
+    document.getElementById('btn-go-setup').addEventListener('click', async ()=>{ showLock('setup'); await refreshSetupBioVisibility(); });
+    document.getElementById('btn-pre-continuar').addEventListener('click', continueFromPreTurno);
+    authGate();
+  }catch(e){
+    console.error('No se pudo iniciar la app:', e);
+    showErrorBanner();
+    document.getElementById('lock-screen').style.display = 'flex';
+  }
 }
 init();
 </script>
